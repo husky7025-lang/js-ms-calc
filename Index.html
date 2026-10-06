@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>대전 고입 내신성적 산출기 (비교과 지침 정밀 검증형)</title>
+  <title>대전 고입 내신성적 산출기 (비교과 취득점수 직관 표시형)</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     @media print {
@@ -19,16 +23,18 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
 
+  <!-- Header -->
   <header class="bg-indigo-700 text-white py-5 shadow-md border-b border-indigo-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
       <div>
         <div class="flex items-center gap-2">
-          <span class="bg-amber-400 text-indigo-950 text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider">대전교육청 공식 기준</span>
+          <span class="bg-amber-400 text-indigo-950 text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider">대전교육청 표준</span>
           <h1 class="text-2xl font-black tracking-tight">고입 내신성적 종합 산출기</h1>
         </div>
-        <p class="text-indigo-200 text-xs sm:text-sm mt-0.5">교과 전 과목 분리 산출 & 비교과 4개 영역(출결·봉사·창체·행특 60점) 정밀 검증</p>
+        <p class="text-indigo-200 text-xs sm:text-sm mt-0.5">교과 전 과목 분리 산출 · 비교과 4개 영역 획득 점수 실시간 직관 표시</p>
       </div>
 
+      <!-- Mode Selector -->
       <div class="no-print bg-indigo-900/60 p-1 rounded-xl flex gap-1 border border-indigo-500/40">
         <button id="mode-daejeon" onclick="switchMode('daejeon')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-indigo-700 shadow-sm">
           대전교육청 (300점)
@@ -43,29 +49,30 @@
     </div>
   </header>
 
+  <!-- Main Container -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- LEFT (8 Cols) -->
+      <!-- LEFT: Upload, Table & Non-Curricular (8 Cols) -->
       <div class="lg:col-span-8 space-y-4">
 
-        <!-- 🛡️ 개인정보 보호 공식 안심 배너 -->
+        <!-- 🛡️ 개인정보 안심 안내 배너 -->
         <div class="no-print bg-emerald-50 border border-emerald-200/90 rounded-2xl p-4 shadow-sm flex items-start gap-3.5">
           <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
             <i data-lucide="shield-check" class="w-5 h-5"></i>
           </div>
           <div class="text-xs leading-relaxed text-emerald-950">
             <div class="flex items-center gap-1.5">
-              <span class="font-extrabold text-sm text-emerald-900">개인정보 로컬 보안 안내 (서버 미전송)</span>
+              <span class="font-extrabold text-sm text-emerald-900">개인정보 로컬 보안 안내 (서버 미전송 원칙)</span>
               <span class="bg-emerald-200 text-emerald-900 text-[10px] font-bold px-1.5 py-0.2 rounded">100% 브라우저 메모리 연산</span>
             </div>
             <p class="mt-1 text-emerald-800">
-              업로드되는 생기부 문서는 <strong>외부 서버로 일절 전송되지 않으며</strong> 오직 선생님 PC 브라우저 내부에서만 성적과 비교과를 판독합니다.
+              업로드되는 생활기록부는 <strong>외부 서버로 일절 전송되지 않으며</strong>, 선생님 PC 브라우저 내부 메모리에서만 성적과 비교과를 판독한 뒤 즉시 파기됩니다.
             </p>
           </div>
         </div>
 
-        <!-- 업로드 박스 -->
+        <!-- 🚀 생기부 PDF 업로드 박스 -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden no-print">
           <div id="drop-zone" class="border-2 border-dashed border-indigo-200 m-3 rounded-xl p-5 text-center transition-all hover:border-indigo-400 hover:bg-indigo-50/20 cursor-pointer relative">
             <input type="file" id="file-input" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
@@ -116,7 +123,7 @@
           <div class="border-b border-slate-200 px-5 py-3 flex justify-between items-center bg-slate-50/50">
             <div>
               <h2 class="text-sm font-bold text-slate-900">개별 교과목 성취도 현황표</h2>
-              <p class="text-[11px] text-slate-500">1학년 1학기는 자유학기(P) 미반영, 개설된 과목만 분모로 계산됩니다.</p>
+              <p class="text-[11px] text-slate-500">1학년 1학기는 자유학기(P) 미반영, 실제 개설된 과목만 분모로 계산됩니다.</p>
             </div>
           </div>
 
@@ -141,102 +148,139 @@
           </div>
         </div>
 
-        <!-- 비교과 활동 카드 (대전광역시 공식 산출 지침 100% 구현) -->
+        <!-- 🌟 비교과 활동 카드: 받은 점수 실시간 직관 표시 구조 -->
         <div id="non-academic-card" class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
           <div class="flex items-center justify-between border-b pb-2">
             <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
               <i data-lucide="award" class="w-4 h-4 text-indigo-600"></i> 비교과 평가 세부 4개 영역 (총 60점 만점)
             </h2>
-            <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded" id="non-academic-total-badge">취득: 54.00 / 60.00점</span>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs text-slate-500 font-medium">비교과 취득 합계:</span>
+              <span class="text-sm font-black text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-lg border border-indigo-100 font-mono" id="non-academic-total-badge">
+                54.00 / 60.00점
+              </span>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             
-            <!-- 1. 출결상황 (24점) -->
-            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="font-bold text-slate-800">1. 출결상황 (24점 만점)</span>
-                <span class="text-indigo-600 font-bold" id="score-attend-display">24.00점</span>
-              </div>
-              <p class="text-[11px] text-slate-500">결석 1일당 -1점 감점 (미인정 지각·조퇴·결과 3회 = 결석 1일)</p>
-              <div class="grid grid-cols-2 gap-2 pt-1">
+            <!-- 1. 출결상황 -->
+            <div class="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2.5">
+              <div class="flex justify-between items-start">
                 <div>
-                  <label class="text-[11px] text-slate-500">미인정 결석일수</label>
-                  <input type="number" min="0" value="0" id="absent-days" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                  <span class="font-bold text-slate-800 text-xs">1. 출결상황 (24점 만점)</span>
+                  <p class="text-[11px] text-slate-500 mt-0.5">미인정 지각·조퇴·결과 3회 = 결석 1일 (1일당 -1점 감점)</p>
                 </div>
-                <div>
-                  <label class="text-[11px] text-slate-500">미인정 지각/조퇴/결과</label>
-                  <input type="number" min="0" value="1" id="tardy-count" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                <div class="text-right flex-shrink-0">
+                  <span class="text-[10px] text-slate-400 block font-medium">실제 받은 점수</span>
+                  <span class="text-base font-black text-emerald-600 font-mono" id="score-attend-display">24.00점</span>
                 </div>
               </div>
-            </div>
-
-            <!-- 2. 봉사활동 (12점) -->
-            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="font-bold text-slate-800">2. 봉사활동 (12점 만점)</span>
-                <span class="text-indigo-600 font-bold" id="score-vol-display">11.00점</span>
+              <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200/60">
+                <div>
+                  <label class="text-[11px] text-slate-600 font-semibold">미인정 결석일수</label>
+                  <input type="number" min="0" value="0" id="absent-days" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-600 font-semibold">미인정 지각/조퇴/결과</label>
+                  <input type="number" min="0" value="1" id="tardy-count" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
+                </div>
               </div>
-              <p class="text-[11px] text-slate-500">학년당 4점 만점 (연 4시간 이상 4점, 3시간 3점, 2시간 2점, 1시간 1점)</p>
-              <div class="grid grid-cols-3 gap-2 pt-1">
-                <div>
-                  <label class="text-[11px] text-slate-500">1학년 시간</label>
-                  <input type="number" min="0" value="5" id="vol-g1" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
-                </div>
-                <div>
-                  <label class="text-[11px] text-slate-500">2학년 시간</label>
-                  <input type="number" min="0" value="5" id="vol-g2" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
-                </div>
-                <div>
-                  <label class="text-[11px] text-slate-500">3학년 시간</label>
-                  <input type="number" min="0" value="3" id="vol-g3" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
-                </div>
+              <div class="text-[11px] text-slate-500 font-medium" id="attend-detail-text">
+                결석 환산 0일 (감점 0점)
               </div>
             </div>
 
-            <!-- 3. 창의적 체험활동 (12점) -->
-            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="font-bold text-slate-800">3. 창의적 체험활동 (12점 만점)</span>
-                <span class="text-indigo-600 font-bold" id="score-creative-display">10.00점</span>
+            <!-- 2. 봉사활동 -->
+            <div class="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2.5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="font-bold text-slate-800 text-xs">2. 봉사활동 (12점 만점)</span>
+                  <p class="text-[11px] text-slate-500 mt-0.5">학년당 4점 만점 (연 4시간 이상 이수 시 4점 만점)</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="text-[10px] text-slate-400 block font-medium">실제 받은 점수</span>
+                  <span class="text-base font-black text-indigo-600 font-mono" id="score-vol-display">11.00점</span>
+                </div>
               </div>
-              <p class="text-[11px] text-slate-500">기본점수 9점(학년당 3점) + 학생회/동아리 반장 가산점(학년당 최대 1점)</p>
-              <div class="grid grid-cols-3 gap-2 pt-1">
+              <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-200/60">
                 <div>
-                  <label class="text-[11px] text-slate-500">1학년 가산</label>
-                  <input type="number" min="0" max="1" value="0" id="creative-b1" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                  <label class="text-[11px] text-slate-600 font-semibold">1학년 (시간)</label>
+                  <input type="number" min="0" value="5" id="vol-g1" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
                 </div>
                 <div>
-                  <label class="text-[11px] text-slate-500">2학년 가산(동아리장)</label>
-                  <input type="number" min="0" max="1" value="1" id="creative-b2" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                  <label class="text-[11px] text-slate-600 font-semibold">2학년 (시간)</label>
+                  <input type="number" min="0" value="5" id="vol-g2" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
                 </div>
                 <div>
-                  <label class="text-[11px] text-slate-500">3학년 가산</label>
-                  <input type="number" min="0" max="1" value="0" id="creative-b3" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                  <label class="text-[11px] text-slate-600 font-semibold">3학년 (시간)</label>
+                  <input type="number" min="0" value="3" id="vol-g3" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
                 </div>
+              </div>
+              <div class="text-[11px] text-slate-500 font-medium" id="vol-detail-text">
+                1학년 4점 + 2학년 4점 + 3학년 3점
               </div>
             </div>
 
-            <!-- 4. 행동특성 및 종합의견 (12점) -->
-            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="font-bold text-slate-800">4. 행동특성 (12점 만점)</span>
-                <span class="text-indigo-600 font-bold" id="score-behavior-display">9.00점</span>
+            <!-- 3. 창의적 체험활동 -->
+            <div class="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2.5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="font-bold text-slate-800 text-xs">3. 창의적 체험활동 (12점 만점)</span>
+                  <p class="text-[11px] text-slate-500 mt-0.5">기본 9점(학년당 3점) + 학생회/동아리장 가산(최대 3점)</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="text-[10px] text-slate-400 block font-medium">실제 받은 점수</span>
+                  <span class="text-base font-black text-indigo-600 font-mono" id="score-creative-display">10.00점</span>
+                </div>
               </div>
-              <p class="text-[11px] text-slate-500">기본점수 9점(학년당 3점) + 선행/모범 표창 가산점(학년당 최대 1점)</p>
-              <div class="grid grid-cols-3 gap-2 pt-1">
+              <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-200/60">
                 <div>
-                  <label class="text-[11px] text-slate-500">1학년 가산</label>
-                  <input type="number" min="0" max="1" value="0" id="behavior-b1" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                  <label class="text-[11px] text-slate-600 font-semibold">1학년 가산</label>
+                  <input type="number" min="0" max="1" value="0" id="creative-b1" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
                 </div>
                 <div>
-                  <label class="text-[11px] text-slate-500">2학년 가산</label>
-                  <input type="number" min="0" max="1" value="0" id="behavior-b2" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                  <label class="text-[11px] text-slate-600 font-semibold">2학년 가산</label>
+                  <input type="number" min="0" max="1" value="1" id="creative-b2" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
                 </div>
                 <div>
-                  <label class="text-[11px] text-slate-500">3학년 가산</label>
-                  <input type="number" min="0" max="1" value="0" id="behavior-b3" onchange="recalculateAll()" class="w-full border rounded p-1 font-bold bg-white">
+                  <label class="text-[11px] text-slate-600 font-semibold">3학년 가산</label>
+                  <input type="number" min="0" max="1" value="0" id="creative-b3" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
                 </div>
+              </div>
+              <div class="text-[11px] text-slate-500 font-medium" id="creative-detail-text">
+                기본 9.00점 + 동아리 반장 가산 1.00점
+              </div>
+            </div>
+
+            <!-- 4. 행동특성 및 종합의견 -->
+            <div class="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2.5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="font-bold text-slate-800 text-xs">4. 행동특성 (12점 만점)</span>
+                  <p class="text-[11px] text-slate-500 mt-0.5">기본 9점(학년당 3점) + 선행/모범 표창 가산(최대 3점)</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="text-[10px] text-slate-400 block font-medium">실제 받은 점수</span>
+                  <span class="text-base font-black text-indigo-600 font-mono" id="score-behavior-display">9.00점</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-1 border-t border-slate-200/60">
+                <div>
+                  <label class="text-[11px] text-slate-600 font-semibold">1학년 가산</label>
+                  <input type="number" min="0" max="1" value="0" id="behavior-b1" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-600 font-semibold">2학년 가산</label>
+                  <input type="number" min="0" max="1" value="0" id="behavior-b2" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
+                </div>
+                <div>
+                  <label class="text-[11px] text-slate-600 font-semibold">3학년 가산</label>
+                  <input type="number" min="0" max="1" value="0" id="behavior-b3" onchange="recalculateAll()" class="mt-1 w-full border rounded-lg p-1.5 font-bold bg-white text-slate-800">
+                </div>
+              </div>
+              <div class="text-[11px] text-slate-500 font-medium" id="behavior-detail-text">
+                기본 9.00점 + 표창 가산 0.00점
               </div>
             </div>
 
@@ -245,7 +289,7 @@
 
       </div>
 
-      <!-- RIGHT (4 Cols) -->
+      <!-- RIGHT: Results & Simulator (4 Cols) -->
       <div class="lg:col-span-4 space-y-4">
 
         <!-- 총점 카드 -->
@@ -430,7 +474,7 @@
       document.getElementById('behavior-b2').value = 0;
       document.getElementById('behavior-b3').value = 0;
 
-      showAlert('실제 생기부의 개별 과목과 출결·봉사·창체·행특 수치가 100% 일치하게 반영되었습니다.');
+      showAlert('실제 생기부 데이터와 비교과 실제 취득 점수가 정확히 반영되었습니다.');
       renderSubjectTable();
       recalculateAll();
     }
@@ -491,25 +535,21 @@
     function parseStudentRecordText(text) {
       initDefaultScores();
 
-      // 출결상황 파싱
       const unauthAbsent = text.match(/결석일수[\s\S]{0,30}?미인정[\s\S]{0,10}?(\d+)/i);
       if (unauthAbsent) document.getElementById('absent-days').value = parseInt(unauthAbsent[1], 10);
 
       const unauthTardy = text.match(/지각[\s\S]{0,30}?미인정[\s\S]{0,10}?(\d+)/i);
       if (unauthTardy) document.getElementById('tardy-count').value = parseInt(unauthTardy[1], 10);
 
-      // 봉사활동 누계 파싱
       const volMatches = [...text.matchAll(/누계시간[\s\S]{0,10}?(\d+)/g)];
       if (volMatches.length >= 1) document.getElementById('vol-g1').value = parseInt(volMatches[0][1], 10) || 5;
       if (volMatches.length >= 2) document.getElementById('vol-g2').value = (parseInt(volMatches[1][1], 10) - parseInt(volMatches[0][1], 10)) || 5;
       if (volMatches.length >= 3) document.getElementById('vol-g3').value = (parseInt(volMatches[2][1], 10) - parseInt(volMatches[1][1], 10)) || 3;
 
-      // 동아리 반장 가산점
       if (text.includes('동아리 반장') || text.includes('동아리반장')) {
         document.getElementById('creative-b2').value = 1;
       }
 
-      // 학년별 교과 파싱
       const g1Idx = text.indexOf('[1학년]');
       const g2Idx = text.indexOf('[2학년]');
       const g3Idx = text.indexOf('[3학년]');
@@ -532,296 +572,4 @@
         gradeData[1].s2[s.id] = extractGrade(t1, '2', searchName, isArt);
         gradeData[2].s1[s.id] = extractGrade(t2, '1', searchName, isArt);
         gradeData[2].s2[s.id] = extractGrade(t2, '2', searchName, isArt);
-        gradeData[3].s1[s.id] = extractGrade(t3, '1', searchName, isArt);
-        gradeData[3].s2[s.id] = gradeData[3].s1[s.id];
-      });
-
-      renderSubjectTable();
-      recalculateAll();
-    }
-
-    // --- 렌더링 및 UI 조작 ---
-    function switchMode(mode) {
-      currentMode = mode;
-      ['daejeon', 'special', 'custom'].forEach(m => {
-        const btn = document.getElementById(`mode-${m}`);
-        btn.className = (m === mode) 
-          ? "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-indigo-700 shadow-sm"
-          : "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-indigo-200 hover:text-white";
-      });
-      const custPanel = document.getElementById('custom-panel');
-      if (mode === 'custom') custPanel.classList.remove('hidden');
-      else custPanel.classList.add('hidden');
-      renderSubjectTable();
-      recalculateAll();
-    }
-
-    function switchGradeTab(grade) {
-      currentTab = grade;
-      [1, 2, 3].forEach(g => {
-        const btn = document.getElementById(`tab-btn-${g}`);
-        btn.className = (g === grade)
-          ? "flex-1 py-2 text-center border-b-2 border-indigo-600 text-indigo-700 bg-white font-bold"
-          : "flex-1 py-2 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition font-semibold";
-      });
-      renderSubjectTable();
-    }
-
-    function renderSubjectTable() {
-      const tbody = document.getElementById('subjectRows');
-      tbody.innerHTML = '';
-
-      separateSubjects.forEach(sub => {
-        const isArtPe = sub.type === 'artpe';
-        const is1stGrade = currentTab === 1;
-        const val1 = gradeData[currentTab].s1[sub.id] || 'none';
-        const val2 = gradeData[currentTab].s2[sub.id] || 'none';
-
-        const row = document.createElement('tr');
-        row.className = "hover:bg-slate-50/60 transition";
-        row.innerHTML = `
-          <td class="py-2 font-bold text-slate-800 flex items-center gap-1.5">
-            ${sub.name}
-            ${currentMode === 'special' && sub.id === 'eng' ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">외고/국제고 160점 핵심</span>' : ''}
-          </td>
-          <td class="py-2">
-            <span class="text-[10px] px-2 py-0.5 rounded-full ${isArtPe ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
-              ${isArtPe ? '체육·예술(A~C)' : '일반교과(A~E)'}
-            </span>
-          </td>
-          <td class="py-2 text-center">
-            ${is1stGrade ? `
-              <span class="px-2 py-0.5 text-[11px] font-bold bg-slate-100 text-slate-400 rounded border border-slate-200">자유학기(P)</span>
-            ` : renderDropdown(currentTab, 1, sub.id, val1, isArtPe)}
-          </td>
-          <td class="py-2 text-center">
-            ${renderDropdown(currentTab, 2, sub.id, val2, isArtPe)}
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function renderDropdown(gr, sem, subId, currentVal, isArtPe) {
-      const options = isArtPe ? ['A', 'B', 'C', 'none'] : ['A', 'B', 'C', 'D', 'E', 'none'];
-      return `
-        <select onchange="updateScore(${gr}, ${sem}, '${subId}', this.value)" class="border rounded px-1.5 py-0.5 text-xs bg-white font-bold text-slate-700 ${currentVal === 'none' ? 'text-slate-300' : ''}">
-          ${options.map(opt => `<option value="${opt}" ${currentVal === opt ? 'selected' : ''}>${opt === 'none' ? '- (미개설)' : opt}</option>`).join('')}
-        </select>
-      `;
-    }
-
-    function updateScore(grade, semester, subId, val) {
-      gradeData[grade][`s${semester}`][subId] = val;
-      recalculateAll();
-    }
-
-    function getGradeAverage(gradeNum, isArt = false) {
-      const semesters = (gradeNum === 1) ? ['s2'] : ['s1', 's2'];
-      const targetSubs = separateSubjects.filter(s => isArt ? s.type === 'artpe' : s.type === 'general');
-      let totalSemAvg = 0;
-      let semCount = 0;
-
-      semesters.forEach(sem => {
-        let semTotal = 0;
-        let subCount = 0;
-        targetSubs.forEach(s => {
-          const val = gradeData[gradeNum][sem][s.id];
-          if (val && val !== 'none' && val !== 'P') {
-            semTotal += (isArt ? artScale[val] : pointScale[val]) || 0;
-            subCount++;
-          }
-        });
-        if (subCount > 0) {
-          totalSemAvg += (semTotal / subCount);
-          semCount++;
-        }
-      });
-      return semCount > 0 ? (totalSemAvg / semCount) : 0;
-    }
-
-    // --- 대전시 공식 산출 계산 엔진 ---
-    function recalculateAll() {
-      let finalTotal = 0;
-      let maxTotal = 300;
-      let generalScore = 0;
-      let artPeScore = 0;
-      let nonAcademicScore = 0;
-
-      // 1. 출결 연산 (24점) : 결석일 + (지각 등 / 3)
-      const absDays = parseInt(document.getElementById('absent-days').value, 10) || 0;
-      const tardy = parseInt(document.getElementById('tardy-count').value, 10) || 0;
-      const totalAbsentDays = absDays + Math.floor(tardy / 3);
-      const scoreAttend = Math.max(0, 24 - totalAbsentDays);
-      document.getElementById('score-attend-display').textContent = `${scoreAttend.toFixed(2)}점`;
-
-      // 2. 봉사 연산 (12점) : 학년당 4점 (연 4시간 이상 만점)
-      const v1 = parseInt(document.getElementById('vol-g1').value, 10) || 0;
-      const v2 = parseInt(document.getElementById('vol-g2').value, 10) || 0;
-      const v3 = parseInt(document.getElementById('vol-g3').value, 10) || 0;
-      const scoreVol = Math.min(4, v1) + Math.min(4, v2) + Math.min(4, v3);
-      document.getElementById('score-vol-display').textContent = `${scoreVol.toFixed(2)}점`;
-
-      // 3. 창체 연산 (12점) : 기본 9점 + 가산
-      const cb1 = parseInt(document.getElementById('creative-b1').value, 10) || 0;
-      const cb2 = parseInt(document.getElementById('creative-b2').value, 10) || 0;
-      const cb3 = parseInt(document.getElementById('creative-b3').value, 10) || 0;
-      const scoreCreative = 9 + Math.min(1, cb1) + Math.min(1, cb2) + Math.min(1, cb3);
-      document.getElementById('score-creative-display').textContent = `${scoreCreative.toFixed(2)}점`;
-
-      // 4. 행특 연산 (12점) : 기본 9점 + 가산
-      const bb1 = parseInt(document.getElementById('behavior-b1').value, 10) || 0;
-      const bb2 = parseInt(document.getElementById('behavior-b2').value, 10) || 0;
-      const bb3 = parseInt(document.getElementById('behavior-b3').value, 10) || 0;
-      const scoreBehavior = 9 + Math.min(1, bb1) + Math.min(1, bb2) + Math.min(1, bb3);
-      document.getElementById('score-behavior-display').textContent = `${scoreBehavior.toFixed(2)}점`;
-
-      nonAcademicScore = scoreAttend + scoreVol + scoreCreative + scoreBehavior;
-      document.getElementById('non-academic-total-badge').textContent = `취득: ${nonAcademicScore.toFixed(2)} / 60.00점`;
-
-      if (currentMode === 'daejeon') {
-        maxTotal = 300;
-
-        // 일반교과 (186점) = 기본점수 6 + 1학년(18점) + 2학년(72점) + 3학년(90점)
-        const g1 = (getGradeAverage(1, false) / 5) * 18;
-        const g2 = (getGradeAverage(2, false) / 5) * 72;
-        const g3 = (getGradeAverage(3, false) / 5) * 90;
-        generalScore = 6 + g1 + g2 + g3;
-
-        // 체육예술 (54점) = 학년당 18점
-        const a1 = (getGradeAverage(1, true) / 5) * 18;
-        const a2 = (getGradeAverage(2, true) / 5) * 18;
-        const a3 = (getGradeAverage(3, true) / 5) * 18;
-        artPeScore = a1 + a2 + a3;
-
-        finalTotal = generalScore + artPeScore + nonAcademicScore;
-
-      } else if (currentMode === 'special') {
-        maxTotal = 160;
-        const engWeights = { 'A': 40, 'B': 36, 'C': 32, 'D': 28, 'E': 24 };
-        let engTotal = 0;
-        [2, 3].forEach(gr => {
-          ['s1', 's2'].forEach(sem => {
-            const grade = gradeData[gr][sem]['eng'] || 'E';
-            engTotal += engWeights[grade] || 24;
-          });
-        });
-        generalScore = engTotal;
-        artPeScore = 0;
-        nonAcademicScore = -totalAbsentDays; // 외고/국제고는 무단결석 감점제
-        finalTotal = Math.max(0, generalScore + nonAcademicScore);
-
-      } else {
-        const custMax = parseFloat(document.getElementById('cust-total').value) || 300;
-        maxTotal = custMax;
-        const w1 = (parseFloat(document.getElementById('cust-w1').value) || 10) / 100;
-        const w2 = (parseFloat(document.getElementById('cust-w2').value) || 40) / 100;
-        const w3 = (parseFloat(document.getElementById('cust-w3').value) || 50) / 100;
-        const baseCurricular = custMax * 0.8;
-
-        generalScore = (getGradeAverage(1, false) / 5) * (baseCurricular * w1) +
-                       (getGradeAverage(2, false) / 5) * (baseCurricular * w2) +
-                       (getGradeAverage(3, false) / 5) * (baseCurricular * w3);
-        artPeScore = (custMax * 0.1) * (getGradeAverage(3, true) / 5);
-        finalTotal = generalScore + artPeScore + (custMax * 0.1 - totalAbsentDays);
-      }
-
-      document.getElementById('display-total-score').textContent = finalTotal.toFixed(2);
-      document.getElementById('display-max-score').textContent = `/ ${maxTotal.toFixed(2)}`;
-      document.getElementById('breakdown-academic').textContent = `${generalScore.toFixed(2)} / ${currentMode==='special'?160:186}`;
-      document.getElementById('breakdown-art-pe').textContent = `${artPeScore.toFixed(2)} / ${currentMode==='special'?0:54}`;
-      document.getElementById('breakdown-non-academic').textContent = `${nonAcademicScore.toFixed(2)} / ${currentMode==='special'?'감점제':60}`;
-
-      updateChart(generalScore, artPeScore, nonAcademicScore);
-      updateDiagnosis(finalTotal);
-    }
-
-    let scoreChart;
-    function initChart() {
-      const ctx = document.getElementById('scoreChart').getContext('2d');
-      scoreChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['일반교과', '체육·예술', '비교과'],
-          datasets: [{
-            data: [64.82, 49.80, 54.00],
-            backgroundColor: ['#4f46e5', '#38bdf8', '#10b981'],
-            borderWidth: 0,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
-          },
-          cutout: '70%'
-        }
-      });
-    }
-
-    function updateChart(gen, art, non) {
-      if (!scoreChart) return;
-      scoreChart.data.datasets[0].data = [Math.max(0, gen), Math.max(0, art), Math.max(0, non)];
-      scoreChart.update();
-    }
-
-    function updateDiagnosis(score) {
-      const container = document.getElementById('school-diagnosis-list');
-      const targets = [
-        { name: '대전 주요 자사고 / 선호 일반고', cutScore: 280, note: '상위권 경합권' },
-        { name: '대전 평준화 일반고 안정 배정선', cutScore: 175, note: '일반 배정 안정 기준' },
-        { name: '특성화고 유망 학과', cutScore: 140, note: '지원 가능 권역' },
-      ];
-
-      container.innerHTML = targets.map(t => {
-        const diff = (score - t.cutScore).toFixed(1);
-        const isSafe = score >= t.cutScore;
-        return `
-          <div class="p-2.5 rounded-lg border ${isSafe ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200'} flex justify-between items-center text-xs">
-            <div>
-              <div class="font-bold text-slate-800">${t.name}</div>
-              <div class="text-[10px] text-slate-500">${t.note}</div>
-            </div>
-            <span class="font-bold px-2 py-0.5 rounded text-[11px] ${isSafe ? 'bg-emerald-600 text-white' : 'bg-rose-100 text-rose-700 border border-rose-200'}">
-              ${isSafe ? `안정 (+${diff}점)` : `부족 (${diff}점)`}
-            </span>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function calculateRequiredFinalGPA() {
-      const target = parseFloat(document.getElementById('target-goal-score').value) || 180;
-      const current = parseFloat(document.getElementById('display-total-score').textContent) || 0;
-      const res = document.getElementById('target-result-msg');
-
-      if (current >= target) {
-        res.innerHTML = `<span class="text-emerald-700 font-bold">🎉 이미 목표 점수를 달성했습니다! (현재: ${current.toFixed(2)}점)</span>`;
-      } else {
-        const diff = (target - current).toFixed(2);
-        res.innerHTML = `<span class="text-indigo-700 font-semibold">목표 달성까지 <strong>+${diff}점</strong> 필요합니다. 3-2학기 지필평가 성적과 봉사 1시간을 추가 확보하세요.</span>`;
-      }
-    }
-
-    function resetData() {
-      if (confirm('모든 데이터를 초기화하시겠습니까?')) {
-        initDefaultScores();
-        document.getElementById('absent-days').value = 0;
-        document.getElementById('tardy-count').value = 0;
-        document.getElementById('vol-g1').value = 4;
-        document.getElementById('vol-g2').value = 4;
-        document.getElementById('vol-g3').value = 4;
-        renderSubjectTable();
-        recalculateAll();
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-      loadExactSample();
-      initChart();
-    });
-  </script>
-</body>
-</html>
+        grade
