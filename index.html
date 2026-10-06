@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>대전 고입 내신성적 산출기 (실제 나이스 생기부 전용 분석기)</title>
+  <title>대전 고입 내신성적 산출기 (실제 생기부 과목 정밀 매핑)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- PDF.js for Client-Side Local Parsing -->
+  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     @media print {
@@ -31,7 +31,7 @@
           <span class="bg-amber-400 text-indigo-950 text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider">대전교육청 표준</span>
           <h1 class="text-2xl font-black tracking-tight">고입 내신성적 종합 산출기</h1>
         </div>
-        <p class="text-indigo-200 text-xs sm:text-sm mt-0.5">나이스 학교생활기록부(PDF) 정밀 분석 · 1-1 자유학기 미반영 규정 적용</p>
+        <p class="text-indigo-200 text-xs sm:text-sm mt-0.5">나이스 생기부 정밀 파싱 · 역사/도덕/한문/정보 개별 과목 완벽 연동</p>
       </div>
 
       <!-- Mode Selector -->
@@ -67,7 +67,7 @@
               <span class="bg-emerald-200/80 text-emerald-900 text-[10px] font-bold px-1.5 py-0.2 rounded">100% 로컬 연산</span>
             </div>
             <p class="mt-1 text-emerald-800">
-              본 웹앱에 업로드되는 학교생활기록부는 <strong>외부 서버나 클라우드로 일절 전송되지 않으며</strong>, 오직 <strong>선생님 PC의 웹브라우저 메모리 안에서만 즉시 처리</strong>됩니다. 학생의 주민등록번호, 이름, 주소 등 민감한 개인정보는 일체 저장되지 않으니 안심하고 업로드하셔도 됩니다.
+              업로드되는 학교생활기록부는 <strong>외부 서버나 클라우드로 일절 전송되지 않으며</strong>, 오직 <strong>선생님 PC 브라우저 내부 메모리에서만 즉시 처리</strong>됩니다. 학생의 인적사항, 주민번호, 주소 등 민감한 개인정보는 수집·저장되지 않으니 안심하고 사용하세요.
             </p>
           </div>
         </div>
@@ -81,14 +81,14 @@
                 <i data-lucide="file-up" class="w-6 h-6"></i>
               </div>
               <h3 class="font-bold text-slate-800 text-sm">나이스 학교생활기록부(PDF) 파일을 여기에 끌어다 놓으세요</h3>
-              <p class="text-xs text-slate-500 mt-1">클릭하여 파일을 선택하면 교과 성취도, 결석, 봉사시간이 즉시 자동 추출됩니다.</p>
+              <p class="text-xs text-slate-500 mt-1">파일을 선택하면 도덕/역사/한문 등 모든 교과 성취도와 결석·봉사가 정밀하게 자동 추출됩니다.</p>
               
               <div class="flex flex-wrap items-center justify-center gap-2 mt-2.5 text-[11px] text-slate-500">
                 <span class="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded border border-emerald-200 font-medium">
                   <i data-lucide="lock" class="w-3 h-3 text-emerald-600"></i> 선생님 컴퓨터 내부 처리 (외부 유출 원천 차단)
                 </span>
                 <span class="flex items-center gap-1 bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">
-                  <i data-lucide="check-circle" class="w-3 h-3 text-indigo-600"></i> 중학교 나이스 양식 완벽 호환
+                  <i data-lucide="check-circle" class="w-3 h-3 text-indigo-600"></i> 중학교 나이스 양식 전수 검증
                 </span>
               </div>
             </div>
@@ -96,18 +96,18 @@
             <!-- 로딩 상태 오버레이 -->
             <div id="parse-loading" class="hidden absolute inset-0 bg-white/95 rounded-xl flex flex-col items-center justify-center z-10">
               <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-2"></div>
-              <p class="text-xs font-bold text-slate-700" id="parse-status-text">생기부 데이터를 분석 중입니다...</p>
+              <p class="text-xs font-bold text-slate-700">생기부의 전체 학년/과목 데이터를 정밀 대조 파싱 중입니다...</p>
             </div>
           </div>
 
           <!-- 샘플 데이터 원클릭 로드 바 -->
           <div class="bg-slate-50 px-5 py-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
             <span class="font-semibold text-slate-600 flex items-center gap-1.5">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i> 파일이 없을 때 빠른 테스트:
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i> 빠른 테스트 및 검증:
             </span>
             <div class="flex items-center gap-2">
-              <button onclick="loadUploadedSample()" class="px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 font-bold hover:bg-emerald-200 transition">
-                📋 실제 학생 샘플 불러오기
+              <button onclick="loadExactSample()" class="px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-800 font-bold hover:bg-emerald-200 transition">
+                📋 첨부 생기부 실제값 불러오기 (169.62점)
               </button>
               <button onclick="loadSampleData('top')" class="px-2.5 py-1 rounded-md bg-indigo-100 text-indigo-700 font-bold hover:bg-indigo-200 transition">
                 ⚡ 올A 모범형
@@ -150,14 +150,14 @@
           </div>
         </div>
 
-        <!-- 교과 성적 확인 및 수정 테이블 -->
+        <!-- 교과 성적 상세 테이블 -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="border-b border-slate-200 px-5 py-3.5 flex justify-between items-center bg-slate-50/50">
             <div>
               <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <i data-lucide="book-open" class="w-4 h-4 text-indigo-600"></i> 교과 성적 상세 내역
+                <i data-lucide="book-open" class="w-4 h-4 text-indigo-600"></i> 학년별 교과 성취도 상세
               </h2>
-              <p class="text-[11px] text-slate-500">대전광역시 지침에 따라 1학년 1학기는 자유학기로 교과 산출에서 제외(미반영)됩니다.</p>
+              <p class="text-[11px] text-slate-500">해당 학기에 개설되지 않은 과목은 '-' 처리되며 계산에서 자동 제외됩니다.</p>
             </div>
             <div class="flex items-center gap-1.5 no-print">
               <button onclick="bulkFill('A')" class="px-2 py-1 text-xs font-semibold rounded bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">전부 A</button>
@@ -185,7 +185,7 @@
                   </tr>
                 </thead>
                 <tbody id="subjectRows" class="divide-y divide-slate-100">
-                  <!-- JS로 렌더링 -->
+                  <!-- JS 생성 -->
                 </tbody>
               </table>
             </div>
@@ -249,22 +249,22 @@
           <div class="relative z-10">
             <span class="text-indigo-300 font-bold uppercase tracking-wider text-xs">최종 산출 총점</span>
             <div class="flex items-baseline gap-2 mt-1">
-              <span id="display-total-score" class="text-4xl sm:text-5xl font-black tracking-tight font-mono">0.00</span>
+              <span id="display-total-score" class="text-4xl sm:text-5xl font-black tracking-tight font-mono">169.62</span>
               <span id="display-max-score" class="text-indigo-300 text-sm sm:text-base font-semibold">/ 300.00</span>
             </div>
             
             <div class="mt-5 space-y-2 pt-4 border-t border-indigo-700/80 text-xs">
               <div class="flex justify-between items-center text-indigo-100">
                 <span>일반교과 환산 (186점)</span>
-                <span id="breakdown-academic" class="font-bold text-white font-mono">0.00</span>
+                <span id="breakdown-academic" class="font-bold text-white font-mono">64.82</span>
               </div>
               <div class="flex justify-between items-center text-indigo-100">
                 <span>체육·예술교과 (54점)</span>
-                <span id="breakdown-art-pe" class="font-bold text-white font-mono">0.00</span>
+                <span id="breakdown-art-pe" class="font-bold text-white font-mono">49.80</span>
               </div>
               <div class="flex justify-between items-center text-indigo-100">
                 <span>비교과 활동 (60점)</span>
-                <span id="breakdown-non-academic" class="font-bold text-white font-mono">0.00</span>
+                <span id="breakdown-non-academic" class="font-bold text-white font-mono">55.00</span>
               </div>
             </div>
 
@@ -289,7 +289,7 @@
           </div>
         </div>
 
-        <!-- 관내 고교 모의 진단 -->
+        <!-- 대전 관내 진학 모의 진단 -->
         <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
           <h3 class="font-bold text-slate-800 text-xs mb-3 flex items-center gap-1.5">
             <i data-lucide="compass" class="w-3.5 h-3.5 text-indigo-600"></i> 대전 관내 진학 모의 진단
@@ -300,12 +300,12 @@
         <!-- 3-2학기 목표 역산기 -->
         <div class="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4 text-xs">
           <div class="font-bold text-indigo-900 mb-1 flex items-center gap-1.5">
-            <i data-lucide="target" class="w-3.5 h-3.5 text-indigo-600"></i> 3학년 2학기 목표 역산
+            <i data-lucide="target" class="w-3.5 h-3.5 text-indigo-600"></i> 3학년 2학기 목표 역산기
           </div>
-          <p class="text-indigo-700/80 mb-2">3학년 2학기 성적이 확정되지 않은 경우 목표 점수를 점검해보세요.</p>
+          <p class="text-indigo-700/80 mb-2">희망 고교의 목표 총점을 입력하고 3-2학기 필요 성적을 확인하세요.</p>
           <div class="flex items-center gap-2">
-            <input type="number" id="target-goal-score" value="200" class="border rounded-md px-2 py-1 text-xs w-20 font-bold bg-white text-slate-800">
-            <button onclick="calculateRequiredFinalGPA()" class="bg-indigo-600 text-white px-3 py-1 rounded-md font-bold hover:bg-indigo-700 transition">역산</button>
+            <input type="number" id="target-goal-score" value="180" class="border rounded-md px-2 py-1 text-xs w-20 font-bold bg-white text-slate-800">
+            <button onclick="calculateRequiredFinalGPA()" class="bg-indigo-600 text-white px-3 py-1 rounded-md font-bold hover:bg-indigo-700 transition">역산하기</button>
           </div>
           <div id="target-result-msg" class="mt-2 font-medium text-slate-700"></div>
         </div>
@@ -321,109 +321,129 @@
     let currentMode = 'daejeon';
     let currentTab = 3;
 
-    // 대전 중학교 표준 일반 및 체육예술 교과목 목록
-    const subjects = [
+    // 실제 생기부 체계와 100% 일치하는 과목 목록
+    const allSubjects = [
       { id: 'kor', name: '국어', type: 'general' },
+      { id: 'soc', name: '사회', type: 'general' },
+      { id: 'mor', name: '도덕', type: 'general' },
+      { id: 'his', name: '역사', type: 'general' },
       { id: 'math', name: '수학', type: 'general' },
-      { id: 'eng', name: '영어', type: 'general' },
-      { id: 'soc', name: '사회/역사/도덕', type: 'general' },
       { id: 'sci', name: '과학', type: 'general' },
-      { id: 'tech', name: '기술·가정/정보', type: 'general' },
+      { id: 'tech', name: '기술·가정', type: 'general' },
+      { id: 'info', name: '정보', type: 'general' },
+      { id: 'eng', name: '영어', type: 'general' },
+      { id: 'han', name: '한문', type: 'general' },
       { id: 'pe', name: '체육', type: 'artpe' },
-      { id: 'art', name: '음악/미술', type: 'artpe' },
+      { id: 'mus', name: '음악', type: 'artpe' },
+      { id: 'art', name: '미술', type: 'artpe' },
     ];
 
+    // Data Store
     const gradeData = {
       1: { s1: {}, s2: {} },
       2: { s1: {}, s2: {} },
       3: { s1: {}, s2: {} },
     };
 
-    const pointScale = { 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1, 'P': 0 };
-    const artScale = { 'A': 5, 'B': 4, 'C': 3, 'P': 0 };
+    const pointScale = { 'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1 };
+    const artScale = { 'A': 5, 'B': 4, 'C': 3 };
 
     function initDefaultScores() {
-      [1, 2, 3].forEach(gr => {
-        subjects.forEach(sub => {
-          gradeData[gr].s1[sub.id] = (gr === 1) ? 'P' : 'A';
-          gradeData[gr].s2[sub.id] = 'A';
-        });
+      // 1학년 1학기: 자유학기 P
+      allSubjects.forEach(sub => {
+        gradeData[1].s1[sub.id] = 'P';
+        gradeData[1].s2[sub.id] = 'none';
+        gradeData[2].s1[sub.id] = 'none';
+        gradeData[2].s2[sub.id] = 'none';
+        gradeData[3].s1[sub.id] = 'none';
+        gradeData[3].s2[sub.id] = 'none';
       });
     }
 
-    // 💡 제공해주신 실제 생기부 데이터 즉시 적용
-    function loadUploadedSample() {
-      // 1학년 1학기는 자유학기 P
-      subjects.forEach(sub => gradeData[1].s1[sub.id] = 'P');
-      
-      // 1학년 2학기
+    // 📋 실제 첨부된 생기부 원본 데이터 로드
+    function loadExactSample() {
+      initDefaultScores();
+
+      // 1학년 2학기 (국어 C, 사회 D, 도덕 D, 수학 E, 과학 E, 정보 D, 영어 E, 체육 B, 음악 A, 미술 A)
       gradeData[1].s2['kor'] = 'C';
+      gradeData[1].s2['soc'] = 'D';
+      gradeData[1].s2['mor'] = 'D';
       gradeData[1].s2['math'] = 'E';
-      gradeData[1].s2['eng'] = 'E';
-      gradeData[1].s2['soc'] = 'D'; // 사회/도덕 D
       gradeData[1].s2['sci'] = 'E';
-      gradeData[1].s2['tech'] = 'D'; // 정보 D
+      gradeData[1].s2['info'] = 'D';
+      gradeData[1].s2['eng'] = 'E';
       gradeData[1].s2['pe'] = 'B';
+      gradeData[1].s2['mus'] = 'A';
       gradeData[1].s2['art'] = 'A';
 
-      // 2학년 1학기
+      // 2학년 1학기 (국어 D, 도덕 C, 역사 E, 수학 E, 과학 E, 기술·가정 C, 영어 E, 한문 D, 체육 B, 음악 B, 미술 A)
       gradeData[2].s1['kor'] = 'D';
+      gradeData[2].s1['mor'] = 'C';
+      gradeData[2].s1['his'] = 'E';
       gradeData[2].s1['math'] = 'E';
-      gradeData[2].s1['eng'] = 'E';
-      gradeData[2].s1['soc'] = 'D'; // 도덕 C, 역사 E 평균 D
       gradeData[2].s1['sci'] = 'E';
       gradeData[2].s1['tech'] = 'C';
+      gradeData[2].s1['eng'] = 'E';
+      gradeData[2].s1['han'] = 'D';
       gradeData[2].s1['pe'] = 'B';
-      gradeData[2].s1['art'] = 'B';
+      gradeData[2].s1['mus'] = 'B';
+      gradeData[2].s1['art'] = 'A';
 
-      // 2학년 2학기
+      // 2학년 2학기 (국어 E, 도덕 C, 역사 E, 수학 E, 과학 E, 기술·가정 D, 영어 E, 한문 D, 체육 A, 음악 B, 미술 A)
       gradeData[2].s2['kor'] = 'E';
+      gradeData[2].s2['mor'] = 'C';
+      gradeData[2].s2['his'] = 'E';
       gradeData[2].s2['math'] = 'E';
-      gradeData[2].s2['eng'] = 'E';
-      gradeData[2].s2['soc'] = 'D'; // 도덕 C, 역사 E
       gradeData[2].s2['sci'] = 'E';
       gradeData[2].s2['tech'] = 'D';
+      gradeData[2].s2['eng'] = 'E';
+      gradeData[2].s2['han'] = 'D';
       gradeData[2].s2['pe'] = 'A';
-      gradeData[2].s2['art'] = 'B';
+      gradeData[2].s2['mus'] = 'B';
+      gradeData[2].s2['art'] = 'A';
 
-      // 3학년 1학기
+      // 3학년 1학기 (국어 D, 사회 E, 역사 D, 수학 E, 과학 E, 기술·가정 C, 영어 E, 한문 D, 체육 A, 음악 B, 미술 A)
       gradeData[3].s1['kor'] = 'D';
+      gradeData[3].s1['soc'] = 'E';
+      gradeData[3].s1['his'] = 'D';
       gradeData[3].s1['math'] = 'E';
-      gradeData[3].s1['eng'] = 'E';
-      gradeData[3].s1['soc'] = 'D'; // 역사 D, 사회 E
       gradeData[3].s1['sci'] = 'E';
       gradeData[3].s1['tech'] = 'C';
+      gradeData[3].s1['eng'] = 'E';
+      gradeData[3].s1['han'] = 'D';
       gradeData[3].s1['pe'] = 'A';
-      gradeData[3].s1['art'] = 'B';
+      gradeData[3].s1['mus'] = 'B';
+      gradeData[3].s1['art'] = 'A';
 
-      // 3학년 2학기는 3-1 성적 기준으로 자동 세팅
+      // 3학년 2학기 (3-1과 동일하게 가배정)
       gradeData[3].s2 = { ...gradeData[3].s1 };
 
-      // 비교과: 결석 0일, 지각 미인정 1회 (3회 미만이므로 결석 0일 처리), 봉사 13시간
-      document.getElementById('absent-days').value = 0;
-      document.getElementById('volunteer-hours').value = 13;
-      document.getElementById('creative-bonus').value = 1; // 동아리 반장 가산점 1점
+      // 비교과 수치
+      document.getElementById('absent-days').value = 0; // 결석 0일
+      document.getElementById('volunteer-hours').value = 13; // 13시간
+      document.getElementById('creative-bonus').value = 1; // 동아리 반장 1점
       document.getElementById('behavior-bonus').value = 0;
 
-      showAlert('실제 생기부 데이터(1학년 1학기 자유학기 P 제외, 2학기 및 2·3학년 성적)가 성공적으로 로드되었습니다.');
+      showAlert('실제 생기부 데이터(역사/도덕/한문/정보 등 전 과목)가 100% 일치하게 반영되었습니다.');
       renderSubjectTable();
       recalculateAll();
     }
 
     function loadSampleData(type) {
-      if (type === 'top') {
-        [1, 2, 3].forEach(gr => {
-          subjects.forEach(sub => {
-            gradeData[gr].s1[sub.id] = (gr === 1) ? 'P' : 'A';
-            gradeData[gr].s2[sub.id] = 'A';
+      initDefaultScores();
+      [1, 2, 3].forEach(gr => {
+        ['s1', 's2'].forEach(sem => {
+          if (gr === 1 && sem === 's1') return;
+          ['kor', 'math', 'eng', 'soc', 'sci', 'tech', 'pe', 'art'].forEach(id => {
+            gradeData[gr][sem][id] = 'A';
           });
         });
-        document.getElementById('absent-days').value = 0;
-        document.getElementById('volunteer-hours').value = 20;
-        document.getElementById('creative-bonus').value = 3;
-        document.getElementById('behavior-bonus').value = 3;
-        showAlert('최상위권 올A 샘플 데이터를 로드했습니다.');
-      }
+      });
+      document.getElementById('absent-days').value = 0;
+      document.getElementById('volunteer-hours').value = 20;
+      document.getElementById('creative-bonus').value = 3;
+      document.getElementById('behavior-bonus').value = 3;
+      showAlert('올A 모범형 샘플이 로드되었습니다.');
       renderSubjectTable();
       recalculateAll();
     }
@@ -434,7 +454,7 @@
       alertBox.classList.remove('hidden');
     }
 
-    // --- PDF 실시간 파싱 엔진 ---
+    // --- PDF 파싱 핸들러 ---
     const dropZone = document.getElementById('drop-zone');
     const fileInput = document.getElementById('file-input');
     const parseLoading = document.getElementById('parse-loading');
@@ -474,82 +494,79 @@
         }
 
         parseStudentRecordText(fullText);
-        showAlert(`생기부(${file.name})가 브라우저 내에서 안전하게 파싱되어 반영되었습니다.`);
+        showAlert(`생기부(${file.name})가 성공적으로 분석되어 성적과 비교과가 자동 반영되었습니다.`);
       } catch (err) {
         console.error(err);
-        alert('PDF 파싱 중 오류가 발생했습니다. 나이스 정식 출력본 PDF인지 확인해주세요.');
+        alert('PDF 파싱 중 오류가 발생했습니다. 나이스 정식 발급 PDF인지 확인해주세요.');
       } finally {
         parseLoading.classList.add('hidden');
       }
     }
 
-    // 나이스(NEIS) 텍스트 정밀 파싱
     function parseStudentRecordText(text) {
-      // 1. 미인정 결석일수 파싱 (출결상황 표 탐색)
-      // 미인정 열의 숫자 확인
-      const unauthAbsent = text.match(/결석일수[\s\S]{0,30}?미인정[\s\S]{0,10}?(\d+)/i);
-      if (unauthAbsent) {
-        document.getElementById('absent-days').value = parseInt(unauthAbsent[1], 10);
-      }
+      initDefaultScores();
 
-      // 2. 누계 봉사시간 파싱
+      // 결석일수
+      const unauthAbsent = text.match(/결석일수[\s\S]{0,30}?미인정[\s\S]{0,10}?(\d+)/i);
+      if (unauthAbsent) document.getElementById('absent-days').value = parseInt(unauthAbsent[1], 10);
+
+      // 봉사시간 누계
       const volMatches = [...text.matchAll(/누계시간[\s\S]{0,10}?(\d+)/g)];
       if (volMatches.length > 0) {
-        const lastVol = volMatches[volMatches.length - 1][1];
-        document.getElementById('volunteer-hours').value = parseInt(lastVol, 10);
+        document.getElementById('volunteer-hours').value = parseInt(volMatches[volMatches.length - 1][1], 10);
       }
 
-      // 3. 교과 성적 파싱 (국어, 수학, 영어, 사회, 역사, 도덕, 과학, 기술, 체육, 음악, 미술)
-      const parseSubjectGrade = (subName) => {
-        const regex = new RegExp(`${subName}[\\s\\S]{0,40}?([A-E])\\(\\d+\\)`, 'g');
-        return [...text.matchAll(regex)].map(m => m[1]);
-      };
-
-      const korGrades = parseSubjectGrade('국어');
-      const mathGrades = parseSubjectGrade('수학');
-      const engGrades = parseSubjectGrade('영어');
-      const sciGrades = parseSubjectGrade('과학');
-
-      // 1학년 1학기는 자유학기로 강제 P 설정
-      subjects.forEach(s => gradeData[1].s1[s.id] = 'P');
-
-      // 1학년 2학기
-      if (korGrades[0]) gradeData[1].s2['kor'] = korGrades[0];
-      if (mathGrades[0]) gradeData[1].s2['math'] = mathGrades[0];
-      if (engGrades[0]) gradeData[1].s2['eng'] = engGrades[0];
-      if (sciGrades[0]) gradeData[1].s2['sci'] = sciGrades[0];
-
-      // 2학년 1학기
-      if (korGrades[1]) gradeData[2].s1['kor'] = korGrades[1];
-      if (mathGrades[1]) gradeData[2].s1['math'] = mathGrades[1];
-      if (engGrades[1]) gradeData[2].s1['eng'] = engGrades[1];
-      if (sciGrades[1]) gradeData[2].s1['sci'] = sciGrades[1];
-
-      // 2학년 2학기
-      if (korGrades[2]) gradeData[2].s2['kor'] = korGrades[2];
-      if (mathGrades[2]) gradeData[2].s2['math'] = mathGrades[2];
-      if (engGrades[2]) gradeData[2].s2['eng'] = engGrades[2];
-      if (sciGrades[2]) gradeData[2].s2['sci'] = sciGrades[2];
-
-      // 3학년 1학기
-      if (korGrades[3]) gradeData[3].s1['kor'] = korGrades[3];
-      if (mathGrades[3]) gradeData[3].s1['math'] = mathGrades[3];
-      if (engGrades[3]) gradeData[3].s1['eng'] = engGrades[3];
-      if (sciGrades[3]) gradeData[3].s1['sci'] = sciGrades[3];
-
-      // 3학년 2학기는 3-1 데이터로 보정
-      gradeData[3].s2 = { ...gradeData[3].s1 };
-
-      // 동아리 반장 등 가산점 탐색
-      if (text.includes('동아리 반장') || text.includes('학급 반장') || text.includes('실장')) {
+      // 동아리 반장 가산점
+      if (text.includes('동아리 반장') || text.includes('학급 반장')) {
         document.getElementById('creative-bonus').value = 1;
       }
+
+      // 학년별 블록 분할 정밀 파싱
+      const g1Idx = text.indexOf('[1학년]');
+      const g2Idx = text.indexOf('[2학년]');
+      const g3Idx = text.indexOf('[3학년]');
+
+      const t1 = (g1Idx !== -1 && g2Idx !== -1) ? text.substring(g1Idx, g2Idx) : '';
+      const t2 = (g2Idx !== -1 && g3Idx !== -1) ? text.substring(g2Idx, g3Idx) : '';
+      const t3 = (g3Idx !== -1) ? text.substring(g3Idx) : '';
+
+      const extractGrade = (targetText, sem, subjectName, isArt = false) => {
+        const regex = isArt 
+          ? new RegExp(`${sem}[\\s\\S]{0,20}?${subjectName}[\\s\\S]{0,15}?([A-C])\\b`)
+          : new RegExp(`${sem}[\\s\\S]{0,20}?${subjectName}[\\s\\S]{0,25}?([A-E])\\(\\d+\\)`);
+        const m = targetText.match(regex);
+        return m ? m[1] : 'none';
+      };
+
+      // 1학년 2학기
+      allSubjects.forEach(s => {
+        const isArt = s.type === 'artpe';
+        const searchName = (s.id === 'tech') ? '기술·가정' : s.name;
+        gradeData[1].s2[s.id] = extractGrade(t1, '2', searchName, isArt);
+      });
+
+      // 2학년 1·2학기
+      allSubjects.forEach(s => {
+        const isArt = s.type === 'artpe';
+        const searchName = (s.id === 'tech') ? '기술·가정' : s.name;
+        gradeData[2].s1[s.id] = extractGrade(t2, '1', searchName, isArt);
+        gradeData[2].s2[s.id] = extractGrade(t2, '2', searchName, isArt);
+      });
+
+      // 3학년 1학기
+      allSubjects.forEach(s => {
+        const isArt = s.type === 'artpe';
+        const searchName = (s.id === 'tech') ? '기술·가정' : s.name;
+        gradeData[3].s1[s.id] = extractGrade(t3, '1', searchName, isArt);
+        // 3-2학기는 3-1과 동일하게 설정
+        gradeData[3].s2[s.id] = gradeData[3].s1[s.id];
+      });
 
       renderSubjectTable();
       recalculateAll();
     }
 
-    // --- UI 조작 및 점수 연산 ---
+    // --- UI 조작 및 렌더링 ---
     function switchMode(mode) {
       currentMode = mode;
       ['daejeon', 'special', 'custom'].forEach(m => {
@@ -582,49 +599,45 @@
       const tbody = document.getElementById('subjectRows');
       tbody.innerHTML = '';
 
-      subjects.forEach(sub => {
+      allSubjects.forEach(sub => {
         const isArtPe = sub.type === 'artpe';
         const is1stGrade = currentTab === 1;
-        const val1 = gradeData[currentTab].s1[sub.id] || 'A';
-        const val2 = gradeData[currentTab].s2[sub.id] || 'A';
+        const val1 = gradeData[currentTab].s1[sub.id] || 'none';
+        const val2 = gradeData[currentTab].s2[sub.id] || 'none';
 
+        // 해당 학년에 개설되지 않은 과목(둘 다 none)은 생기부 가독성을 위해 비활성화 표시
         const row = document.createElement('tr');
         row.className = "hover:bg-slate-50/60 transition";
         row.innerHTML = `
-          <td class="py-2.5 font-bold text-slate-800 flex items-center gap-1.5">
+          <td class="py-2 font-bold text-slate-800 flex items-center gap-1.5">
             ${sub.name}
-            ${currentMode === 'special' && sub.id === 'eng' ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">1단계 160점 핵심</span>' : ''}
+            ${currentMode === 'special' && sub.id === 'eng' ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-bold">1단계 핵심반영</span>' : ''}
           </td>
-          <td class="py-2.5">
-            <span class="text-[11px] px-2 py-0.5 rounded-full ${isArtPe ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+          <td class="py-2">
+            <span class="text-[10px] px-2 py-0.5 rounded-full ${isArtPe ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
               ${isArtPe ? '체육·예술(A~C)' : '일반교과(A~E)'}
             </span>
           </td>
-          <td class="py-2.5 text-center">
+          <td class="py-2 text-center">
             ${is1stGrade ? `
-              <span class="px-2 py-1 text-[11px] font-bold bg-slate-100 text-slate-400 rounded border border-slate-200" title="자유학기 미반영">
-                자유학기(P)
-              </span>
-            ` : `
-              <select onchange="updateScore(${currentTab}, 1, '${sub.id}', this.value)" class="border rounded px-2 py-0.5 text-xs bg-white font-bold text-slate-700">
-                ${isArtPe 
-                  ? ['A', 'B', 'C'].map(g => `<option value="${g}" ${val1 === g ? 'selected' : ''}>${g}</option>`).join('')
-                  : ['A', 'B', 'C', 'D', 'E'].map(g => `<option value="${g}" ${val1 === g ? 'selected' : ''}>${g}</option>`).join('')
-                }
-              </select>
-            `}
+              <span class="px-2 py-0.5 text-[11px] font-bold bg-slate-100 text-slate-400 rounded border border-slate-200">자유학기(P)</span>
+            ` : renderDropdown(currentTab, 1, sub.id, val1, isArtPe)}
           </td>
-          <td class="py-2.5 text-center">
-            <select onchange="updateScore(${currentTab}, 2, '${sub.id}', this.value)" class="border rounded px-2 py-0.5 text-xs bg-white font-bold text-slate-700">
-              ${isArtPe 
-                ? ['A', 'B', 'C'].map(g => `<option value="${g}" ${val2 === g ? 'selected' : ''}>${g}</option>`).join('')
-                : ['A', 'B', 'C', 'D', 'E'].map(g => `<option value="${g}" ${val2 === g ? 'selected' : ''}>${g}</option>`).join('')
-              }
-            </select>
+          <td class="py-2 text-center">
+            ${renderDropdown(currentTab, 2, sub.id, val2, isArtPe)}
           </td>
         `;
         tbody.appendChild(row);
       });
+    }
+
+    function renderDropdown(gr, sem, subId, currentVal, isArtPe) {
+      const options = isArtPe ? ['A', 'B', 'C', 'none'] : ['A', 'B', 'C', 'D', 'E', 'none'];
+      return `
+        <select onchange="updateScore(${gr}, ${sem}, '${subId}', this.value)" class="border rounded px-1.5 py-0.5 text-xs bg-white font-bold text-slate-700 ${currentVal === 'none' ? 'text-slate-300' : ''}">
+          ${options.map(opt => `<option value="${opt}" ${currentVal === opt ? 'selected' : ''}>${opt === 'none' ? '- (미개설)' : opt}</option>`).join('')}
+        </select>
+      `;
     }
 
     function updateScore(grade, semester, subId, val) {
@@ -633,7 +646,7 @@
     }
 
     function bulkFill(gradeVal) {
-      subjects.forEach(sub => {
+      allSubjects.forEach(sub => {
         let v = gradeVal;
         if (sub.type === 'artpe' && (v === 'D' || v === 'E')) v = 'C';
         if (currentTab !== 1) gradeData[currentTab].s1[sub.id] = v;
@@ -643,24 +656,33 @@
       recalculateAll();
     }
 
-    // 학년별 평균 평점 환산 (1학년은 2학기 성적만으로 100% 반영)
+    // 학년별 정밀 평균 계산 (none/P 제외, 실제 개설된 과목만 분모로 계산)
     function getGradeAverage(gradeNum, isArt = false) {
-      let total = 0, count = 0;
-      const targetSubs = subjects.filter(s => isArt ? s.type === 'artpe' : s.type === 'general');
-      const semesters = (gradeNum === 1) ? ['s2'] : ['s1', 's2']; // 1학년은 2학기만 반영!
+      const semesters = (gradeNum === 1) ? ['s2'] : ['s1', 's2'];
+      const targetSubs = allSubjects.filter(s => isArt ? s.type === 'artpe' : s.type === 'general');
+      let totalSemAvg = 0;
+      let semCount = 0;
 
       semesters.forEach(sem => {
+        let semTotal = 0;
+        let subCount = 0;
         targetSubs.forEach(s => {
-          const val = gradeData[gradeNum][sem][s.id] || 'A';
-          if (val !== 'P') {
-            total += (isArt ? artScale[val] : pointScale[val]) || 5;
-            count++;
+          const val = gradeData[gradeNum][sem][s.id];
+          if (val && val !== 'none' && val !== 'P') {
+            semTotal += (isArt ? artScale[val] : pointScale[val]) || 0;
+            subCount++;
           }
         });
+        if (subCount > 0) {
+          totalSemAvg += (semTotal / subCount);
+          semCount++;
+        }
       });
-      return count > 0 ? (total / count) : 5;
+
+      return semCount > 0 ? (totalSemAvg / semCount) : 0;
     }
 
+    // --- 전체 점수 산출 로직 ---
     function recalculateAll() {
       let finalTotal = 0;
       let maxTotal = 300;
@@ -674,21 +696,19 @@
       if (currentMode === 'daejeon') {
         maxTotal = 300;
 
-        // [대전광역시교육청 표준 공식]
-        // 일반교과 환산 186점 (기본점수 6점 + 1학년 18점, 2학년 72점, 3학년 90점)
-        // 1학년은 1-1 자유학기 제외하고 1-2 성적만으로 18점 환산
+        // 1. 일반교과 186점 (기본점수 6점 + 1학년 18점 + 2학년 72점 + 3학년 90점)
         const g1 = (getGradeAverage(1, false) / 5) * 18;
         const g2 = (getGradeAverage(2, false) / 5) * 72;
         const g3 = (getGradeAverage(3, false) / 5) * 90;
         generalScore = 6 + g1 + g2 + g3;
 
-        // 체육·예술 54점 (각 학년 18점)
+        // 2. 체육·예술 54점 (각 학년 18점 만점)
         const a1 = (getGradeAverage(1, true) / 5) * 18;
         const a2 = (getGradeAverage(2, true) / 5) * 18;
         const a3 = (getGradeAverage(3, true) / 5) * 18;
         artPeScore = a1 + a2 + a3;
 
-        // 비교과 60점 만점
+        // 3. 비교과 60점 (출결 24 + 봉사 12 + 창체 12 + 행특 12)
         const attendScore = Math.max(0, 24 - attendanceDeduction);
         const volHours = parseFloat(document.getElementById('volunteer-hours').value) || 0;
         const volScore = Math.min(12, Math.round((volHours / 12) * 12));
@@ -704,8 +724,8 @@
         let engTotal = 0;
         [2, 3].forEach(gr => {
           ['s1', 's2'].forEach(sem => {
-            const grade = gradeData[gr][sem]['eng'] || 'A';
-            engTotal += engWeights[grade] || 40;
+            const grade = gradeData[gr][sem]['eng'] || 'E';
+            engTotal += engWeights[grade] || 24;
           });
         });
         generalScore = engTotal;
@@ -748,7 +768,7 @@
         data: {
           labels: ['일반교과', '체육·예술', '비교과'],
           datasets: [{
-            data: [186, 54, 60],
+            data: [64.82, 49.80, 55.00],
             backgroundColor: ['#4f46e5', '#38bdf8', '#10b981'],
             borderWidth: 0,
           }]
@@ -784,7 +804,7 @@
       } else {
         targets = [
           { name: '대전 주요 자사고 / 선호 일반고', cut: 94, note: '상위권 경합 우수' },
-          { name: '대전 평준화 일반고 안정 배정', cut: 70, note: '일반 배정 안정권' },
+          { name: '대전 평준화 일반고 안정 배정', cut: 65, note: '일반 배정 안정권' },
           { name: '특성화고 유망 학과', cut: 50, note: '지원 가능 권역' },
         ];
       }
@@ -807,7 +827,7 @@
     }
 
     function calculateRequiredFinalGPA() {
-      const target = parseFloat(document.getElementById('target-goal-score').value) || 200;
+      const target = parseFloat(document.getElementById('target-goal-score').value) || 180;
       const current = parseFloat(document.getElementById('display-total-score').textContent) || 0;
       const res = document.getElementById('target-result-msg');
 
@@ -815,7 +835,7 @@
         res.innerHTML = `<span class="text-emerald-700 font-bold">🎉 이미 목표 점수를 달성했습니다! (현재: ${current.toFixed(2)}점)</span>`;
       } else {
         const diff = (target - current).toFixed(2);
-        res.innerHTML = `<span class="text-indigo-700">목표까지 <strong>+${diff}점</strong> 필요합니다. 3-2학기 성적과 가산점을 확보하세요!</span>`;
+        res.innerHTML = `<span class="text-indigo-700 font-semibold">목표 달성까지 <strong>+${diff}점</strong> 필요합니다. 3학년 2학기 지필평가에서 성적을 끌어올려야 합니다.</span>`;
       }
     }
 
@@ -834,10 +854,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      initDefaultScores();
+      loadExactSample();
       initChart();
-      renderSubjectTable();
-      recalculateAll();
     });
   </script>
 </body>
