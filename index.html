@@ -275,7 +275,7 @@
                 </span>
               </div>
               <input type="number" min="0" max="3" value="1" id="creative-bonus" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold">
-              <span class="text-[10px] text-slate-400 mt-1 block">가산 해당 학년 수 (매 학년 1점·최대 3점, 6개월 이상 활동) · PDF 업로드 시 자동 판독</span>
+              <span class="text-[10px] text-slate-400 mt-1 block">가산 해당 학년 수 (매 학년 1점·최대 3점) · '학급부반장(2024.03.01…)' 형식 자동 판독, 없으면 0</span>
             </div>
 
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80">
@@ -639,32 +639,17 @@
       }
 
       // 동아리·반장/임원 가산점: 매 학년 1점, 최대 3점 (문서 Ⅶ-5-가-2)
-      // 특기사항에서 직함 패턴을 찾고, 뒤따르는 날짜(YYYY.MM.DD.)의 연도로 학년도를 구분하여 중복 없이 계산
-      // ※ '반장'처럼 짧게 잡으면 "정부반장 선거" 같은 활동 주제에 오탐되므로 온전한 직함 형태로만 판독
+      // ※ 구버전 pdf.js(CDN 3.11)는 특기사항 글꼴을 글자마다 띄워 추출("학 급 부 반 장")하므로
+      //    공백을 전부 제거한 텍스트에서 "직함(YYYY.MM.DD." 형태로 판독 → 추출 방식에 무관하게 동작
+      // ※ 날짜가 뒤따르지 않는 "○○반장 선거" 같은 활동 주제는 제외됨 (실제 역할 기록만 인정)
       // ※ 6개월(1개 학기) 이상 활동 요건은 자동 판단이 어려우니 생기부 확인 후 수동 조정 필요
-      // ※ pdf.js 추출 시 단어 사이 공백이 여러 칸일 수 있어 \s* 로 매칭 ('동아리   반장' 등)
-      // ※ '반장'처럼 짧게 잡으면 "정부반장 선거" 같은 활동 주제에 오탐되므로 온전한 직함 형태로만 판독
-      const bonusPatterns = [
-        /학급\s*반장/, /학급\s*부반장/,
-        /동아리\s*부장/, /동아리\s*반장/,
-        /전교학생회\s*장/, /전교학생회\s*부회장/,
-        /학생회\s*장/, /전교\s*회장/, /전교\s*부회장/, /학생회\s*임원/
-      ];
+      const compact = text.replace(/\s+/g, '');
+      const bonusRe = /(학급반장|학급부반장|동아리부장|동아리반장|전교학생회장|전교학생회부회장|학생회장|전교회장|전교부회장|학생회임원)\((\d{4})\./g;
       const bonusYears = new Set();
-      let bonusNoYear = false;
-      bonusPatterns.forEach(re => {
-        const g = new RegExp(re.source, 'g');
-        let m;
-        while ((m = g.exec(text)) !== null) {
-          const ym = text.substring(m.index, m.index + 80).match(/\((\d{4})\.\d{2}\.\d{2}\./);
-          if (ym) bonusYears.add(ym[1]);
-          else bonusNoYear = true;
-        }
-      });
+      let bm;
+      while ((bm = bonusRe.exec(compact)) !== null) bonusYears.add(bm[2]);
       // 해당 기록이 없으면 0으로 명시적 초기화 (이전 학생 값이 남아 혼선을 주지 않도록)
-      let creativeBonusPts = bonusYears.size;
-      if (creativeBonusPts === 0 && bonusNoYear) creativeBonusPts = 1; // 날짜 없는 기록은 1점으로
-      document.getElementById('creative-bonus').value = Math.min(3, creativeBonusPts);
+      document.getElementById('creative-bonus').value = Math.min(3, bonusYears.size);
       // 행동특성 가산점(모범 표창 등)은 자동 판독 불가 → 새 PDF 업로드 시 0으로 초기화 후 수동 입력
       document.getElementById('behavior-bonus').value = 0;
 
