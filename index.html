@@ -44,7 +44,7 @@
         <div class="flex items-center gap-2">
           <span class="bg-amber-400 text-indigo-950 text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider">대전교육청 표준</span>
           <h1 class="text-2xl font-black tracking-tight">고입 내신성적 종합 산출기</h1>
-          <span class="bg-indigo-900/70 text-indigo-100 text-[11px] font-bold px-1.5 py-0.5 rounded" title="파일 버전">v17</span>
+          <span class="bg-indigo-900/70 text-indigo-100 text-[11px] font-bold px-1.5 py-0.5 rounded" title="파일 버전">v18</span>
         </div>
         <p class="text-indigo-200 text-xs sm:text-sm mt-0.5">나이스 생기부 정밀 파싱 · 역사/도덕/한문/정보 개별 과목 완벽 연동</p>
       </div>
@@ -275,8 +275,21 @@
                   <span class="text-[10px] text-slate-400">12점 만점</span>
                 </span>
               </div>
-              <input type="number" min="0" max="3" value="1" id="creative-bonus" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold">
-              <span class="text-[10px] text-slate-400 mt-1 block">가산 해당 학년 수 (매 학년 1점·최대 3점) · '학급부반장(2024.03.01…)' 형식 자동 판독, 없으면 0</span>
+              <div class="flex gap-1.5">
+                <label class="flex-1">
+                  <span class="text-[10px] text-slate-500 font-bold block text-center mb-0.5">1학년</span>
+                  <input type="number" min="0" max="1" value="0" id="creative-bonus-1" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold text-center">
+                </label>
+                <label class="flex-1">
+                  <span class="text-[10px] text-slate-500 font-bold block text-center mb-0.5">2학년</span>
+                  <input type="number" min="0" max="1" value="0" id="creative-bonus-2" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold text-center">
+                </label>
+                <label class="flex-1">
+                  <span class="text-[10px] text-slate-500 font-bold block text-center mb-0.5">3학년</span>
+                  <input type="number" min="0" max="1" value="0" id="creative-bonus-3" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold text-center">
+                </label>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1 block">매 학년 1점·최대 3점 · '학급부반장(2024.03.01…)' 형식 자동 판독</span>
             </div>
 
             <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80">
@@ -287,8 +300,21 @@
                   <span class="text-[10px] text-slate-400">12점 만점</span>
                 </span>
               </div>
-              <input type="number" min="0" max="3" value="0" id="behavior-bonus" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold">
-              <span class="text-[10px] text-slate-400 mt-1 block">가산 해당 학년 수 (매 학년 1점·최대 3점) · 표창 등은 생기부 확인 후 수동 입력</span>
+              <div class="flex gap-1.5">
+                <label class="flex-1">
+                  <span class="text-[10px] text-slate-500 font-bold block text-center mb-0.5">1학년</span>
+                  <input type="number" min="0" max="1" value="0" id="behavior-bonus-1" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold text-center">
+                </label>
+                <label class="flex-1">
+                  <span class="text-[10px] text-slate-500 font-bold block text-center mb-0.5">2학년</span>
+                  <input type="number" min="0" max="1" value="0" id="behavior-bonus-2" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold text-center">
+                </label>
+                <label class="flex-1">
+                  <span class="text-[10px] text-slate-500 font-bold block text-center mb-0.5">3학년</span>
+                  <input type="number" min="0" max="1" value="0" id="behavior-bonus-3" onchange="recalculateAll()" class="w-full border rounded-lg p-1.5 text-xs font-bold text-center">
+                </label>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1 block">매 학년 1점·최대 3점 · 수상경력 표창장(선행·봉사·효행·모범) 자동 판독</span>
             </div>
 
           </div>
@@ -497,8 +523,12 @@
       document.getElementById('vol-g1').value = 5; // 1학년 5시간 → 4점
       document.getElementById('vol-g2').value = 5; // 2학년 5시간 → 4점
       document.getElementById('vol-g3').value = 3; // 3학년 3시간 → 3점 (봉사 11점)
-      document.getElementById('creative-bonus').value = 1; // 동아리 반장 1점
-      document.getElementById('behavior-bonus').value = 0;
+      document.getElementById('creative-bonus-1').value = 0; // 1학년 가산 없음
+      document.getElementById('creative-bonus-2').value = 1; // 2학년 동아리 반장 1점
+      document.getElementById('creative-bonus-3').value = 0; // 3학년 가산 없음
+      document.getElementById('behavior-bonus-1').value = 0;
+      document.getElementById('behavior-bonus-2').value = 0;
+      document.getElementById('behavior-bonus-3').value = 0;
 
       showAlert('실제 생기부 데이터(역사/도덕/한문/정보 등 전 과목)가 100% 일치하게 반영되었습니다.');
       renderSubjectTable();
@@ -520,8 +550,12 @@
       document.getElementById('vol-g1').value = 4;
       document.getElementById('vol-g2').value = 4;
       document.getElementById('vol-g3').value = 4;
-      document.getElementById('creative-bonus').value = 3;
-      document.getElementById('behavior-bonus').value = 3;
+      document.getElementById('creative-bonus-1').value = 1;
+      document.getElementById('creative-bonus-2').value = 1;
+      document.getElementById('creative-bonus-3').value = 1;
+      document.getElementById('behavior-bonus-1').value = 1;
+      document.getElementById('behavior-bonus-2').value = 1;
+      document.getElementById('behavior-bonus-3').value = 1;
       showAlert('올A 모범형 샘플이 로드되었습니다.');
       renderSubjectTable();
       recalculateAll();
@@ -611,6 +645,7 @@
       // 문서 Ⅶ-5-나: 학년별 4점 만점 (연간 4h→4점, 3h→3점, 2h→2점, 2h 미만→1점)
       const volH = { 1: 0, 2: 0, 3: 0 };
       let volFound = false;
+      let entryYear = 0; // 입학년도 추정용: 봉사활동 1학년 구간의 첫 날짜 연도
       const vStart = text.indexOf('누계시간'), vEnd = text.indexOf('교과학습발달상황');
       if (vStart !== -1 && vEnd !== -1) {
         // 표 뒤에 붙는 다음 섹션 번호("6. " 등) 제거 후 날짜 행 단위로 분리
@@ -621,6 +656,10 @@
         if (h0) curGrade = parseInt(h0[1], 10);
         for (let i = 1; i < parts.length; i++) {
           const part = parts[i];
+          if (!entryYear && curGrade === 1) {
+            const yM = part.match(/^(20\d{2})\./);
+            if (yM) entryYear = parseInt(yM[1], 10);
+          }
           // "시간 누계시간 학년라벨" (다음 학년으로 전환)
           let mm = part.match(/(\d+)\s+(\d+)\s+([123])\s*$/);
           if (mm) {
@@ -639,21 +678,59 @@
         document.getElementById('vol-g3').value = volH[3];
       }
 
-      // 동아리·반장/임원 가산점: 매 학년 1점, 최대 3점 (문서 Ⅶ-5-가-2)
+      // ---- 가산점 자동 판독 (매 학년 1점, 최대 3점) ----
+      // 창체(문서 Ⅶ-5-가-2): 반장·부반장 등 역할 기록 / 행특(문서 Ⅶ-4-나): 선행·봉사·효행 등 표창장
       // ※ 구버전 pdf.js(CDN 3.11)는 특기사항 글꼴을 글자마다 띄워 추출("학 급 부 반 장")하므로
-      //    공백을 전부 제거한 텍스트에서 "직함(YYYY.MM.DD." 형태로 판독 → 추출 방식에 무관하게 동작
-      // ※ 날짜가 뒤따르지 않는 "○○반장 선거" 같은 활동 주제는 제외됨 (실제 역할 기록만 인정)
+      //    공백을 전부 제거한 텍스트에서 판독 → 추출 방식에 무관하게 동작
+      const compact = text.replace(/\s+/g, '');
+
+      // 창체: "직함(YYYY." 형태 (날짜 없는 "○○반장 선거" 같은 활동 주제는 제외)
       // ※ 단독 "부반장"/"반장"도 인정하되, "정부반장" 속 일부와 구분 (연도 Set으로 중복 집계 방지)
       // ※ 6개월(1개 학기) 이상 활동 요건은 자동 판단이 어려우니 생기부 확인 후 수동 조정 필요
-      const compact = text.replace(/\s+/g, '');
       const bonusRe = /(학급반장|학급부반장|동아리부장|동아리반장|전교학생회장|전교학생회부회장|학생회장|전교회장|전교부회장|학생회임원|(?<!정)부반장|(?<!부)반장)\((\d{4})\./g;
       const bonusYears = new Set();
       let bm;
       while ((bm = bonusRe.exec(compact)) !== null) bonusYears.add(bm[2]);
+
+      // 행특: 수상경력의 표창장(선행·봉사·효행·모범 부문) — 교과우수상 등은 제외
+      // ※ 최종 인정은 학교 학업성적관리위원회 심의사항이므로 생기부 확인 후 수동 조정 필요
+      // ※ 섹션 경계도 compact 기준 탐색 (3.11식 "수 상 경 력" 띄어쓰기 대응)
+      const awardYears = new Set();
+      const cStart = compact.indexOf('수상경력');
+      let cEnd = compact.indexOf('학교폭력');
+      if (cEnd === -1) cEnd = compact.length;
+      if (cStart !== -1 && cEnd > cStart) {
+        const awardSec = compact.substring(cStart, cEnd);
+        if (!awardSec.includes('해당사항없음')) {
+          const awardRe = /표창장\(([^)]*)\)|(선행상|봉사상|효행상|모범상)/g;
+          let am;
+          while ((am = awardRe.exec(awardSec)) !== null) {
+            const name = am[1] !== undefined ? am[1] : am[2];
+            if (/선행|봉사|효행|모범/.test(name)) {
+              const dm = awardSec.substring(am.index, am.index + 50).match(/(20\d{2})\.\d{2}\.\d{2}/);
+              if (dm) awardYears.add(dm[1]);
+            }
+          }
+        }
+      }
+
+      // 학년도 → 학년 매핑 (입학년도 기준; 봉사 1학년 기록 연도로 추정, 없으면 가산 기록 최소 연도를 1학년으로)
       // 해당 기록이 없으면 0으로 명시적 초기화 (이전 학생 값이 남아 혼선을 주지 않도록)
-      document.getElementById('creative-bonus').value = Math.min(3, bonusYears.size);
-      // 행동특성 가산점(모범 표창 등)은 자동 판독 불가 → 새 PDF 업로드 시 0으로 초기화 후 수동 입력
-      document.getElementById('behavior-bonus').value = 0;
+      const allYears = [...bonusYears, ...awardYears].map(Number);
+      const baseYear = entryYear || (allYears.length ? Math.min(...allYears) : 0);
+      const yearToGrade = y => baseYear ? (Number(y) - baseYear + 1) : 0;
+      [1, 2, 3].forEach(g => {
+        document.getElementById('creative-bonus-' + g).value = 0;
+        document.getElementById('behavior-bonus-' + g).value = 0;
+      });
+      bonusYears.forEach(y => {
+        const g = yearToGrade(y);
+        if (g >= 1 && g <= 3) document.getElementById('creative-bonus-' + g).value = 1;
+      });
+      awardYears.forEach(y => {
+        const g = yearToGrade(y);
+        if (g >= 1 && g <= 3) document.getElementById('behavior-bonus-' + g).value = 1;
+      });
 
       // 학년별 블록 분할 정밀 파싱
       const g1Idx = text.indexOf('[1학년]');
@@ -857,8 +934,12 @@
         const v2 = parseFloat(document.getElementById('vol-g2').value) || 0;
         const v3 = parseFloat(document.getElementById('vol-g3').value) || 0;
         const volScore = volBand(v1) + volBand(v2) + volBand(v3);
-        const creativeBonus = Math.min(3, parseFloat(document.getElementById('creative-bonus').value) || 0);
-        const behaviorBonus = Math.min(3, parseFloat(document.getElementById('behavior-bonus').value) || 0);
+        // 창체 가산: 매 학년 1점, 최대 3점 (문서 Ⅶ-5-가-2)
+        const cbVal = n => Math.min(1, Math.max(0, parseInt(document.getElementById('creative-bonus-' + n).value) || 0));
+        const creativeBonus = cbVal(1) + cbVal(2) + cbVal(3);
+        // 행특 가산: 매 학년 1점, 최대 3점 (문서 Ⅶ-4-나)
+        const bbVal = n => Math.min(1, Math.max(0, parseInt(document.getElementById('behavior-bonus-' + n).value) || 0));
+        const behaviorBonus = bbVal(1) + bbVal(2) + bbVal(3);
 
         nonAcademicScore = attendScore + volScore + (9 + creativeBonus) + (9 + behaviorBonus);
         finalTotal = 6 + J1 + J2 + J3 + nonAcademicScore;
@@ -1052,8 +1133,12 @@
         document.getElementById('vol-g1').value = 0;
         document.getElementById('vol-g2').value = 0;
         document.getElementById('vol-g3').value = 0;
-        document.getElementById('creative-bonus').value = 1;
-        document.getElementById('behavior-bonus').value = 0;
+        document.getElementById('creative-bonus-1').value = 0;
+        document.getElementById('creative-bonus-2').value = 0;
+        document.getElementById('creative-bonus-3').value = 0;
+        document.getElementById('behavior-bonus-1').value = 0;
+        document.getElementById('behavior-bonus-2').value = 0;
+        document.getElementById('behavior-bonus-3').value = 0;
         document.getElementById('upload-alert').classList.add('hidden');
         renderSubjectTable();
         recalculateAll();
