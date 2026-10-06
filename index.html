@@ -68,7 +68,7 @@
         <div class="flex items-center gap-2">
           <span class="bg-amber-400 text-indigo-950 text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider">대전교육청 표준</span>
           <h1 class="text-2xl font-black tracking-tight">고입 내신성적 종합 산출기</h1>
-          <span class="bg-indigo-900/70 text-indigo-100 text-[11px] font-bold px-1.5 py-0.5 rounded" title="파일 버전">v22</span>
+          <span class="bg-indigo-900/70 text-indigo-100 text-[11px] font-bold px-1.5 py-0.5 rounded" title="파일 버전">v23</span>
         </div>
         <p class="text-indigo-200 text-xs sm:text-sm mt-0.5">나이스 생기부 정밀 파싱 · 역사/도덕/한문/정보 개별 과목 완벽 연동</p>
       </div>
@@ -403,11 +403,12 @@
           </div>
         </div>
 
-        <!-- 대전 관내 진학 모의 진단 -->
+        <!-- 영역별 손실 진단 -->
         <div id="diagnosis-card" class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-          <h3 class="font-bold text-slate-800 text-xs mb-3 flex items-center gap-1.5">
-            <i data-lucide="compass" class="w-3.5 h-3.5 text-indigo-600"></i> 대전 관내 진학 모의 진단
+          <h3 class="font-bold text-slate-800 text-xs mb-1 flex items-center gap-1.5">
+            <i data-lucide="trending-down" class="w-3.5 h-3.5 text-indigo-600"></i> 영역별 손실 진단
           </h3>
+          <p class="text-[10px] text-slate-400 mb-3">학생 본인 점수 기반 · 만점 대비 손실 분석 (추정 커트라인 없음)</p>
           <div class="space-y-2.5" id="school-diagnosis-list"></div>
         </div>
 
@@ -1042,6 +1043,43 @@
           cbArr, creativeBonus, bbArr, behaviorBonus,
           generalScore, artPeScore, nonAcademicScore, finalTotal
         });
+
+        // --- 영역별 손실 진단 ---
+        const lossAreas = [
+          { label: '일반교과', score: generalScore, max: 186 },
+          { label: '체육·예술', score: artPeScore, max: 54 },
+          { label: '출결', score: attendScore, max: 24 },
+          { label: '봉사활동', score: volScore, max: 12 },
+          { label: '창의적체험활동', score: 9 + creativeBonus, max: 12 },
+          { label: '행동특성', score: 9 + behaviorBonus, max: 12 },
+        ];
+        const topLoss = [...lossAreas].sort((x, y) => (y.max - y.score) - (x.max - x.score))[0];
+        const trendVals = [P1, P2, P3].map(P => {
+          const all = [...P.gs.map(x => x.avg), ...P.as.map(x => x.avg)];
+          return all.length ? all.reduce((t, x) => t + x, 0) / all.length : null;
+        });
+        const trendTxt = trendVals.map((v, i) => v === null ? `${i + 1}학년 –` : `${i + 1}학년 ${v.toFixed(2)}`).join(' → ');
+        let trendDir = '';
+        if (trendVals[0] !== null && trendVals[2] !== null) {
+          trendDir = trendVals[2] > trendVals[0] + 0.049 ? '상승세 ↗'
+            : trendVals[2] < trendVals[0] - 0.049 ? '하락세 ↘' : '유지 →';
+        }
+        const opps = [];
+        [v1, v2, v3].forEach((h, i) => {
+          const b = volBand(h);
+          if (b < 4) {
+            const nextH = b === 1 ? 2 : b === 2 ? 3 : 4;
+            opps.push(`봉사 ${i + 1}학년 ${h}시간 → ${nextH}시간이 되면 +1점`);
+          }
+        });
+        cbArr.forEach((v, i) => { if (!v) opps.push(`창체 ${i + 1}학년 반장·부반장 활동 시 +1점`); });
+        bbArr.forEach((v, i) => { if (!v) opps.push(`행특 ${i + 1}학년 선행·봉사·효행 표창 시 +1점`); });
+        renderLossDiagnosis(lossAreas, `
+          <div class="text-[11px] text-slate-600">💡 가장 큰 손실: <b class="text-slate-800">${topLoss.label} ${(topLoss.max - topLoss.score).toFixed(2)}점</b></div>
+          <div class="text-[11px] text-slate-600">📈 학년별 평균평점 추이: <b class="text-slate-800 font-mono">${trendTxt}</b> ${trendDir}</div>
+          ${opps.length
+            ? `<div class="text-[11px] text-slate-600">✨ <b>+1점 기회</b><br>${opps.slice(0, 3).map(o => `· ${o}`).join('<br>')}${opps.length > 3 ? `<br>· 외 ${opps.length - 3}개` : ''}</div>`
+            : `<div class="text-[11px] text-emerald-600">✨ 봉사·가산 만점! 추가 +1점 구간이 없습니다</div>`}`);
       } else if (currentMode === 'special') {
         maxTotal = 160;
         const engWeights = { 'A': 40, 'B': 36, 'C': 32, 'D': 28, 'E': 24 };
@@ -1063,6 +1101,7 @@
         ];
         printSummaryHTML = '';
         document.getElementById('formula-card').style.display = 'none';
+        renderLossDiagnosis([{ label: '영어 내신', score: generalScore, max: 160 }], '');
 
       } else {
         const custMax = parseFloat(document.getElementById('cust-total').value) || 300;
@@ -1088,6 +1127,11 @@
         ];
         printSummaryHTML = '';
         document.getElementById('formula-card').style.display = 'none';
+        renderLossDiagnosis([
+          { label: '일반교과', score: generalScore, max: Math.round(custMax * 0.8) },
+          { label: '체육·예술', score: artPeScore, max: Math.round(custMax * 0.1) },
+          { label: '비교과', score: nonAcademicScore, max: Math.round(custMax * 0.1) },
+        ], '');
       }
 
       document.getElementById('display-total-score').textContent = finalTotal.toFixed(2);
@@ -1104,7 +1148,6 @@
       });
 
       updateChart(generalScore, artPeScore, nonAcademicScore);
-      updateDiagnosis(finalTotal, maxTotal);
     }
 
     // --- 공식별 세부 산출 과정 (화면 표시용) ---
@@ -1268,40 +1311,26 @@
       scoreChart.update();
     }
 
-    function updateDiagnosis(score, maxScore) {
+    // --- 영역별 손실 진단 (학생 본인 데이터 기반 · 추정 커트라인 없음) ---
+    function renderLossDiagnosis(areas, insightHTML) {
       const container = document.getElementById('school-diagnosis-list');
-      const ratio = (score / maxScore) * 100;
-
-      let targets = [];
-      if (currentMode === 'special') {
-        targets = [
-          { name: '대전외고 / 국제고 인기학부', cut: 98, note: '영어 올A + 동점자 국어/사회 우수' },
-          { name: '대전외고 일반 학과', cut: 95, note: '영어 B 1개 이내 경합권' },
-          { name: '자사고 (전국/광역)', cut: 93, note: '1단계 통과 안정권' },
-        ];
-      } else {
-        targets = [
-          { name: '대전 주요 자사고 / 선호 일반고', cut: 94, note: '상위권 경합 우수' },
-          { name: '대전 평준화 일반고 안정 배정', cut: 65, note: '일반 배정 안정권' },
-          { name: '특성화고 유망 학과', cut: 50, note: '지원 가능 권역' },
-        ];
-      }
-
-      container.innerHTML = targets.map(t => {
-        const isSafe = ratio >= t.cut;
-        const diff = (ratio - t.cut).toFixed(1);
+      const sorted = [...areas].sort((x, y) => (x.score / x.max) - (y.score / y.max));
+      const bars = sorted.map(a => {
+        const rate = a.max > 0 ? Math.max(0, Math.min(100, (a.score / a.max) * 100)) : 100;
+        const color = rate >= 95 ? 'bg-emerald-500' : rate >= 80 ? 'bg-indigo-500' : rate >= 60 ? 'bg-amber-500' : 'bg-rose-500';
+        const scoreTxt = Number.isInteger(a.score) ? String(a.score) : a.score.toFixed(2);
         return `
-          <div class="p-2.5 rounded-lg border ${isSafe ? 'bg-emerald-50/50 border-emerald-200' : 'bg-slate-50 border-slate-200'} flex justify-between items-center text-xs">
-            <div>
-              <div class="font-bold text-slate-800">${t.name}</div>
-              <div class="text-[10px] text-slate-500">${t.note}</div>
+          <div>
+            <div class="flex justify-between items-baseline text-[11px] mb-1">
+              <span class="font-bold text-slate-700">${a.label}</span>
+              <span class="text-slate-400 text-[10px]"><b class="text-slate-800 font-mono text-[11px]">${scoreTxt}</b> / ${a.max}점 · ${rate.toFixed(1)}%</span>
             </div>
-            <span class="font-bold px-2 py-0.5 rounded text-[11px] ${isSafe ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}">
-              ${isSafe ? `안정 (+${diff}%)` : `소신 (${diff}%)`}
-            </span>
-          </div>
-        `;
+            <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full rounded-full ${color}" style="width:${rate.toFixed(1)}%"></div>
+            </div>
+          </div>`;
       }).join('');
+      container.innerHTML = bars + (insightHTML ? `<div class="pt-2 mt-1 border-t border-slate-100 space-y-1">${insightHTML}</div>` : '');
     }
 
     function calculateRequiredFinalGPA() {
