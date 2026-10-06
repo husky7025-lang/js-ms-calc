@@ -18,19 +18,43 @@
       body { background: #fff !important; }
       .shadow-md, .shadow-lg, .shadow-xl { box-shadow: none !important; }
     }
-    /* 인쇄용 상담표: 화면에서는 숨김, 인쇄 시에만 표시 */
+    /* 인쇄용 상담표: 화면에서는 숨김, 인쇄 시에만 표시 (다크 카드 디자인) */
     #print-report { display: none; }
     @media print {
       body > header, body > main { display: none !important; }
-      #print-report { display: block !important; color: #000; }
-      #print-report h1 { font-size: 20px; font-weight: 800; text-align: center; margin: 0 0 6px; }
-      #print-report .print-meta { display: flex; justify-content: space-between; font-size: 12px; color: #444; margin-bottom: 12px; }
-      #print-report table { width: 100%; border-collapse: collapse; font-size: 14px; }
-      #print-report th, #print-report td { border: 1px solid #999; padding: 8px 10px; text-align: center; }
-      #print-report th { background: #f0f0f0; font-weight: 700; }
-      #print-report td:first-child { text-align: left; }
-      #print-report tr.total-row td { font-weight: 800; background: #f5f5f5; }
-      #print-report .print-note { font-size: 11px; color: #666; margin-top: 10px; }
+      #print-report { display: block !important; }
+      #print-report, #print-report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .pr-card { background: #191a40; border-radius: 20px; padding: 30px 32px 24px; color: #fff; max-width: 660px; margin: 0 auto; font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+      .pr-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+      .pr-title { font-size: 15px; font-weight: 600; color: #e8e9ff; }
+      .pr-badge { font-size: 11px; color: #c9cbff; background: rgba(255,255,255,.12); border-radius: 999px; padding: 4px 12px; }
+      .pr-total { font-size: 58px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+      .pr-total .pr-unit { font-size: 22px; font-weight: 600; margin-left: 6px; color: #dfe1ff; }
+      .pr-bar { height: 10px; border-radius: 999px; background: rgba(255,255,255,.16); margin: 12px 0 20px; overflow: hidden; }
+      .pr-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #60a5fa, #a78bfa); }
+      .pr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .pr-item { background: rgba(255,255,255,.07); border-radius: 14px; padding: 14px 16px; }
+      .pr-label { font-size: 12px; color: #b9bce8; margin-bottom: 6px; }
+      .pr-val { font-size: 23px; font-weight: 800; }
+      .pr-val .pr-max { font-size: 12px; font-weight: 400; color: #9ea1d4; margin-left: 6px; }
+      .pr-summary { display: flex; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.14); font-size: 12.5px; color: #c6c9f2; }
+      .pr-summary b { color: #fff; font-weight: 700; }
+      .pr-foot { display: flex; justify-content: space-between; max-width: 660px; margin: 12px auto 0; font-size: 11px; color: #666; }
+      .pr-note { max-width: 660px; margin: 6px auto 0; font-size: 11px; color: #888; }
+      .pr-disclaimer { max-width: 660px; margin: 10px auto 0; font-size: 11.5px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 8px 12px; line-height: 1.5; }
+      /* 밝은 테마 */
+      #print-report.light .pr-card { background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; }
+      #print-report.light .pr-title { color: #312e81; }
+      #print-report.light .pr-badge { background: #eef2ff; color: #4f46e5; }
+      #print-report.light .pr-total { color: #1e1b4b; }
+      #print-report.light .pr-total .pr-unit { color: #6366f1; }
+      #print-report.light .pr-bar { background: #e2e8f0; }
+      #print-report.light .pr-item { background: #f8fafc; border: 1px solid #eef2ff; }
+      #print-report.light .pr-label { color: #64748b; }
+      #print-report.light .pr-val { color: #1e1b4b; }
+      #print-report.light .pr-val .pr-max { color: #94a3b8; }
+      #print-report.light .pr-summary { border-top-color: #e2e8f0; color: #475569; }
+      #print-report.light .pr-summary b { color: #1e1b4b; }
     }
     .dragover { border-color: #4f46e5 !important; background-color: #eef2ff !important; }
   </style>
@@ -44,7 +68,7 @@
         <div class="flex items-center gap-2">
           <span class="bg-amber-400 text-indigo-950 text-xs font-black px-2 py-0.5 rounded uppercase tracking-wider">대전교육청 표준</span>
           <h1 class="text-2xl font-black tracking-tight">고입 내신성적 종합 산출기</h1>
-          <span class="bg-indigo-900/70 text-indigo-100 text-[11px] font-bold px-1.5 py-0.5 rounded" title="파일 버전">v18</span>
+          <span class="bg-indigo-900/70 text-indigo-100 text-[11px] font-bold px-1.5 py-0.5 rounded" title="파일 버전">v22</span>
         </div>
         <p class="text-indigo-200 text-xs sm:text-sm mt-0.5">나이스 생기부 정밀 파싱 · 역사/도덕/한문/정보 개별 과목 완벽 연동</p>
       </div>
@@ -350,7 +374,15 @@
               </div>
             </div>
 
-            <div class="no-print mt-5 grid grid-cols-2 gap-2 pt-2">
+            <div class="no-print mt-5 flex items-center justify-between">
+              <span class="text-indigo-200/90 text-xs font-semibold">인쇄 테마</span>
+              <div class="flex rounded-lg overflow-hidden border border-indigo-700/80 text-xs font-semibold">
+                <button id="theme-btn-dark" onclick="setPrintTheme('dark')" class="px-3 py-1.5 bg-indigo-600 text-white transition">🌙 다크</button>
+                <button id="theme-btn-light" onclick="setPrintTheme('light')" class="px-3 py-1.5 bg-indigo-950/60 text-indigo-200 hover:bg-indigo-950 transition">☀️ 밝게</button>
+              </div>
+            </div>
+
+            <div class="no-print mt-2 grid grid-cols-2 gap-2 pt-2">
               <button onclick="printReport()" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-xs font-semibold transition">
                 <i data-lucide="printer" class="w-3.5 h-3.5"></i> 상담표 인쇄
               </button>
@@ -395,22 +427,33 @@
       </div>
 
     </div>
+
+    <!-- 공식별 세부 산출 과정 -->
+    <div id="formula-card" class="mt-6 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+      <h3 class="font-bold text-slate-800 text-sm mb-1">🧮 공식별 세부 산출 과정</h3>
+      <p class="text-[11px] text-slate-500 mb-4">실제 입력된 성적으로 계산된 수식입니다. 숫자를 직접 대입해 확인하실 수 있습니다.</p>
+      <div id="formula-detail" class="space-y-5"></div>
+    </div>
   </main>
 
   <!-- 인쇄용 상담표 (화면에서는 숨김, 인쇄 시에만 표시) -->
   <div id="print-report">
-    <h1>고입 내신성적 상담표</h1>
-    <div class="print-meta">
+    <div class="pr-card">
+      <div class="pr-head">
+        <span class="pr-title">🏆 최종 고입 내신 총점</span>
+        <span class="pr-badge" id="print-max-badge">300점 만점</span>
+      </div>
+      <div class="pr-total"><span id="print-total">0.00</span><span class="pr-unit">점</span></div>
+      <div class="pr-bar"><div class="pr-fill" id="print-fill"></div></div>
+      <div class="pr-grid" id="print-grid"></div>
+      <div class="pr-summary" id="print-summary"></div>
+    </div>
+    <div class="pr-foot">
       <span id="print-mode"></span>
       <span id="print-date"></span>
     </div>
-    <table>
-      <thead>
-        <tr><th>항목</th><th>점수</th><th>만점</th></tr>
-      </thead>
-      <tbody id="print-tbody"></tbody>
-    </table>
-    <p class="print-note" id="print-note"></p>
+    <p class="pr-disclaimer" id="print-disclaimer"></p>
+    <p class="pr-note" id="print-note"></p>
   </div>
 
   <script>
@@ -418,7 +461,8 @@
 
     let currentMode = 'daejeon';
     let currentTab = 3;
-    let printRows = []; // 인쇄용 상담표 행 데이터
+    let printRows = []; // 인쇄용 상담표 카드 데이터
+    let printSummaryHTML = ''; // 인쇄용 하단 요약 (교과/비교과 총점)
 
     // 실제 생기부 체계와 100% 일치하는 과목 목록
     const allSubjects = [
@@ -892,6 +936,21 @@
       return semCount > 0 ? (totalSemAvg / semCount) : 0;
     }
 
+    // 학기별 평균평점 (공식별 세부 산출 과정 표시용)
+    function getSemesterAverage(gradeNum, sem, isArt = false) {
+      const targetSubs = allSubjects.filter(s => isArt ? s.type === 'artpe' : s.type === 'general');
+      let semTotal = 0;
+      let subCount = 0;
+      targetSubs.forEach(s => {
+        const val = gradeData[gradeNum][sem][s.id];
+        if (val && val !== 'none' && val !== 'P') {
+          semTotal += (isArt ? artScale[val] : pointScale[val]) || 0;
+          subCount++;
+        }
+      });
+      return { avg: subCount > 0 ? semTotal / subCount : 0, count: subCount };
+    }
+
     // --- 전체 점수 산출 로직 ---
     function recalculateAll() {
       let finalTotal = 0;
@@ -911,21 +970,29 @@
         maxTotal = 300;
 
         // 1·2. 교과 240점: 학년별 점수 J1·J2·J3는 반올림하여 소수 셋째 자리까지 (문서 Ⅶ-2-다, 표2 비고)
+        // ※ 아래 분해 계산식(계수×학기별 평점합)은 수식 표시와 동일한 식이며, 기존 계산식과 전수 일치 검증됨
         const r3 = x => Math.round(x * 1000) / 1000;
-        const J1 = r3((getGradeAverage(1, false) / 5) * 18 + (getGradeAverage(1, true) / 5) * 18);
-        const J2 = r3((getGradeAverage(2, false) / 5) * 72 + (getGradeAverage(2, true) / 5) * 18);
-        const J3 = r3((getGradeAverage(3, false) / 5) * 90 + (getGradeAverage(3, true) / 5) * 18);
+        const semAvgs = (gr, isArt) => (gr === 1 ? ['s2'] : ['s1', 's2'])
+          .map(s => ({ sem: s, ...getSemesterAverage(gr, s, isArt) }))
+          .filter(x => x.count > 0);
+        // 학년별 [일반교과 부분, 체육·예술 부분] — 성적이 없는 학기는 제외하고 계수를 보정
+        function gradeParts(gr, coefGen, coefArt) {
+          const baseSems = gr === 1 ? 1 : 2;
+          const gs = semAvgs(gr, false), as = semAvgs(gr, true);
+          const gCoef = gs.length ? coefGen * baseSems / gs.length : coefGen;
+          const aCoef = as.length ? coefArt * baseSems / as.length : coefArt;
+          const gPart = gCoef * gs.reduce((t, x) => t + x.avg, 0);
+          const aPart = aCoef * as.reduce((t, x) => t + x.avg, 0);
+          return { gs, as, gCoef, aCoef, gPart, aPart, J: r3(gPart + aPart) };
+        }
+        const P1 = gradeParts(1, 3.6, 3.6);
+        const P2 = gradeParts(2, 7.2, 1.8);
+        const P3 = gradeParts(3, 9.0, 1.8);
+        const J1 = P1.J, J2 = P2.J, J3 = P3.J;
 
         // 표시용 구분 (일반교과 186 = 기본 6 + 학년별 / 체육·예술 54)
-        const g1 = (getGradeAverage(1, false) / 5) * 18;
-        const g2 = (getGradeAverage(2, false) / 5) * 72;
-        const g3 = (getGradeAverage(3, false) / 5) * 90;
-        generalScore = 6 + g1 + g2 + g3;
-
-        const a1 = (getGradeAverage(1, true) / 5) * 18;
-        const a2 = (getGradeAverage(2, true) / 5) * 18;
-        const a3 = (getGradeAverage(3, true) / 5) * 18;
-        artPeScore = a1 + a2 + a3;
+        generalScore = 6 + P1.gPart + P2.gPart + P3.gPart;
+        artPeScore = P1.aPart + P2.aPart + P3.aPart;
 
         // 3. 비교과 60점 (출결 24 + 봉사 12 + 창체 12 + 행특 12)
         // 봉사: 학년별 4점 만점, 연간 구간 판정 (문서 Ⅶ-5-나 표5, 2020~2026 재학생)
@@ -936,10 +1003,12 @@
         const volScore = volBand(v1) + volBand(v2) + volBand(v3);
         // 창체 가산: 매 학년 1점, 최대 3점 (문서 Ⅶ-5-가-2)
         const cbVal = n => Math.min(1, Math.max(0, parseInt(document.getElementById('creative-bonus-' + n).value) || 0));
-        const creativeBonus = cbVal(1) + cbVal(2) + cbVal(3);
+        const cbArr = [cbVal(1), cbVal(2), cbVal(3)];
+        const creativeBonus = cbArr[0] + cbArr[1] + cbArr[2];
         // 행특 가산: 매 학년 1점, 최대 3점 (문서 Ⅶ-4-나)
         const bbVal = n => Math.min(1, Math.max(0, parseInt(document.getElementById('behavior-bonus-' + n).value) || 0));
-        const behaviorBonus = bbVal(1) + bbVal(2) + bbVal(3);
+        const bbArr = [bbVal(1), bbVal(2), bbVal(3)];
+        const behaviorBonus = bbArr[0] + bbArr[1] + bbArr[2];
 
         nonAcademicScore = attendScore + volScore + (9 + creativeBonus) + (9 + behaviorBonus);
         finalTotal = 6 + J1 + J2 + J3 + nonAcademicScore;
@@ -950,15 +1019,29 @@
         document.getElementById('score-creative').textContent = `획득 ${9 + creativeBonus}점`;
         document.getElementById('score-behavior').textContent = `획득 ${9 + behaviorBonus}점`;
 
-        // 인쇄용 상담표 데이터
+        // 인쇄용 상담표 데이터 (다크 카드: 6개 항목 카드 + 총점)
         printRows = [
-          { label: '내신점수', score: (6 + J1 + J2 + J3).toFixed(2), max: 240 },
-          { label: '출결점수', score: attendScore, max: 24 },
-          { label: '봉사점수', score: volScore, max: 12 },
-          { label: '창체점수', score: 9 + creativeBonus, max: 12 },
-          { label: '행특점수', score: 9 + behaviorBonus, max: 12 },
+          { label: '일반교과 성적', score: generalScore.toFixed(2), max: 186 },
+          { label: '체육·예술 성적', score: artPeScore.toFixed(2), max: 54 },
+          { label: '출결 성적', score: attendScore, max: 24 },
+          { label: '행동특성 성적', score: 9 + behaviorBonus, max: 12 },
+          { label: '창의적체험활동', score: 9 + creativeBonus, max: 12 },
+          { label: '봉사활동 성적', score: volScore, max: 12 },
           { label: '총점', score: finalTotal.toFixed(2), max: 300, total: true },
         ];
+        printSummaryHTML =
+          `<span>교과 총점(240점): <b>${(generalScore + artPeScore).toFixed(2)}점</b></span>` +
+          `<span>비교과 총점(60점): <b>${nonAcademicScore.toFixed(2)}점</b></span>`;
+
+        // --- 공식별 세부 산출 과정 (화면 표시용) ---
+        document.getElementById('formula-card').style.display = '';
+        document.getElementById('formula-detail').innerHTML = buildFormulaDetail({
+          P1, P2, P3, J1, J2, J3,
+          attendScore, absentDays, tardyCnt, totalAbsentDays,
+          v1, v2, v3, volBand, volScore,
+          cbArr, creativeBonus, bbArr, behaviorBonus,
+          generalScore, artPeScore, nonAcademicScore, finalTotal
+        });
       } else if (currentMode === 'special') {
         maxTotal = 160;
         const engWeights = { 'A': 40, 'B': 36, 'C': 32, 'D': 28, 'E': 24 };
@@ -978,6 +1061,8 @@
           { label: '영어 내신점수', score: generalScore.toFixed(1), max: 160 },
           { label: '총점', score: finalTotal.toFixed(2), max: 160, total: true },
         ];
+        printSummaryHTML = '';
+        document.getElementById('formula-card').style.display = 'none';
 
       } else {
         const custMax = parseFloat(document.getElementById('cust-total').value) || 300;
@@ -1001,6 +1086,8 @@
           { label: '비교과', score: nonAcademicScore.toFixed(2), max: Math.round(custMax * 0.1) },
           { label: '총점', score: finalTotal.toFixed(2), max: custMax, total: true },
         ];
+        printSummaryHTML = '';
+        document.getElementById('formula-card').style.display = 'none';
       }
 
       document.getElementById('display-total-score').textContent = finalTotal.toFixed(2);
@@ -1020,7 +1107,79 @@
       updateDiagnosis(finalTotal, maxTotal);
     }
 
-    // --- 인쇄용 상담표 ---
+    // --- 공식별 세부 산출 과정 (화면 표시용) ---
+    function buildFormulaDetail(d) {      const f2 = x => x.toFixed(2), f3 = x => x.toFixed(3);
+      const fmtC = c => Number.isInteger(c) ? c.toFixed(1) : String(Math.round(c * 10) / 10);
+      const semName = s => s === 's1' ? '1학기' : '2학기';
+
+      function partFormula(coef, arr) {
+        if (!arr.length) return fmtC(coef) + ' × (성적 없음)';
+        return `${fmtC(coef)} × (${arr.map(x => f2(x.avg)).join(' + ')})`;
+      }
+      function partValue(coef, arr) {
+        if (!arr.length) return '0.000';
+        return f3(coef * arr.reduce((t, x) => t + x.avg, 0));
+      }
+      function partLegend(label, arr) {
+        if (!arr.length) return `${label}: 성적 없음`;
+        return `${label}: ` + arr.map(x => `${semName(x.sem)} ${f2(x.avg)} (${x.count}과목)`).join(' · ');
+      }
+      function gradeBlock(gr, P, jName, jMax, note) {
+        const missNote = (P.gs.length + P.as.length) < (gr === 1 ? 2 : 4)
+          ? ' <span class="text-amber-600">※ 일부 학기 성적 없음 — 있는 학기만으로 산출</span>' : '';
+        return `
+        <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+          <div class="font-bold text-slate-700 mb-1">${gr}학년 점수 (${jName}, ${jMax}점 만점) <span class="font-normal text-slate-400 text-[11px]">— ${note}</span>${missNote}</div>
+          <div class="font-mono text-[12.5px] text-slate-800 overflow-x-auto whitespace-nowrap pb-1">${partFormula(P.gCoef, P.gs)} + ${partFormula(P.aCoef, P.as)} = ${partValue(P.gCoef, P.gs)} + ${partValue(P.aCoef, P.as)} = <b>${f3(P.J)}점</b></div>
+          <div class="text-[11px] text-slate-400 mt-1">${partLegend('일반교과', P.gs)}<br>${partLegend('체육·예술', P.as)}</div>
+        </div>`;
+      }
+
+      const volTxt = [d.v1, d.v2, d.v3].map(h => `${h}시간→${d.volBand(h)}점`).join(' + ');
+
+      return `
+      <div>
+        <div class="font-bold text-slate-700 mb-1">📚 교과 성적 <span class="text-slate-400 font-normal text-[11px]">(240점 만점)</span></div>
+        <div class="text-[11px] text-slate-500 mb-2">평점 환산 — 일반교과: A=5, B=4, C=3, D=2, E=1 · 체육·예술: A=5, B=4, C=3 (D·E는 C로 환산)</div>
+        <div class="space-y-2.5">
+          ${gradeBlock(1, d.P1, 'J1', 36, '2학기만 반영 (1학기 자유학기 제외)')}
+          ${gradeBlock(2, d.P2, 'J2', 90, '1·2학기 반영')}
+          ${gradeBlock(3, d.P3, 'J3', 108, '1·2학기 반영')}
+          <div class="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
+            <div class="font-bold text-indigo-900 mb-1">교과 총점 <span class="font-normal text-[11px]">(J = J1 + J2 + J3 + 기본점수 6점)</span></div>
+            <div class="font-mono text-[12.5px] text-indigo-900 overflow-x-auto whitespace-nowrap pb-1">${f3(d.J1)} + ${f3(d.J2)} + ${f3(d.J3)} + 6.000 = <b>${(6 + d.J1 + d.J2 + d.J3).toFixed(2)}점</b> <span class="text-[11px]">(240점 만점)</span></div>
+            <div class="text-[11px] text-indigo-400 mt-1">J1·J2·J3는 소수 셋째 자리에서 반올림 (2027학년도 대전 고입 기본계획 Ⅶ-2-다)</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="font-bold text-slate-700 mb-2">🌱 비교과 <span class="text-slate-400 font-normal text-[11px]">(60점 만점)</span></div>
+        <div class="space-y-2 text-[12px]">
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+            <div class="font-bold text-slate-700 mb-1">출결 <span class="font-normal text-slate-400 text-[11px]">(24점 만점)</span></div>
+            <div class="font-mono text-slate-700">미인정 결석 ${d.absentDays}일 + 지각·조퇴·결과 ${d.tardyCnt}회 (3회=1일) → 환산 ${d.totalAbsentDays}일 → <b>${d.attendScore}점</b></div>
+            <div class="text-[10.5px] text-slate-400 mt-1">0~2일 24점 · 3~5일 21점 · 6~8일 18점 · 9~11일 15점 · 12~14일 12점 · 15일 이상 9점</div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+            <div class="font-bold text-slate-700 mb-1">봉사활동 <span class="font-normal text-slate-400 text-[11px]">(12점 만점)</span></div>
+            <div class="font-mono text-slate-700">${volTxt} = <b>${d.volScore}점</b></div>
+            <div class="text-[10.5px] text-slate-400 mt-1">학년별 4시간 이상 4점 · 3시간 3점 · 2시간 2점 · 1시간 이하 1점</div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+            <div class="font-bold text-slate-700 mb-1">창의적체험활동 <span class="font-normal text-slate-400 text-[11px]">(12점 만점)</span></div>
+            <div class="font-mono text-slate-700">기본 9점 + 가산 ${d.creativeBonus}점 (1학년 ${d.cbArr[0]} · 2학년 ${d.cbArr[1]} · 3학년 ${d.cbArr[2]}) = <b>${9 + d.creativeBonus}점</b></div>
+            <div class="text-[10.5px] text-slate-400 mt-1">반장·부반장 등 학년별 1점, 최대 3점</div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-3 border border-slate-100">
+            <div class="font-bold text-slate-700 mb-1">행동특성 <span class="font-normal text-slate-400 text-[11px]">(12점 만점)</span></div>
+            <div class="font-mono text-slate-700">기본 9점 + 가산 ${d.behaviorBonus}점 (1학년 ${d.bbArr[0]} · 2학년 ${d.bbArr[1]} · 3학년 ${d.bbArr[2]}) = <b>${9 + d.behaviorBonus}점</b></div>
+            <div class="text-[10.5px] text-slate-400 mt-1">선행·봉사·효행 표창 학년별 1점, 최대 3점</div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    // --- 인쇄용 상담표 (다크 카드 디자인) ---
     function buildPrintReport() {
       const now = new Date();
       const modeNames = {
@@ -1028,17 +1187,50 @@
         special: '외고·국제고형 (160점)',
         custom: '자유 커스텀'
       };
+      const total = printRows.find(r => r.total) || { score: '0.00', max: 300 };
+      const cards = printRows.filter(r => !r.total);
+      document.getElementById('print-report').classList.toggle('light', printTheme === 'light');
+      document.getElementById('print-max-badge').textContent = `${total.max}점 만점`;
+      document.getElementById('print-total').textContent = total.score;
+      document.getElementById('print-fill').style.width =
+        Math.max(0, Math.min(100, (parseFloat(total.score) / total.max) * 100)) + '%';
+      document.getElementById('print-grid').innerHTML = cards.map(c => `
+        <div class="pr-item">
+          <div class="pr-label">${c.label}</div>
+          <div class="pr-val">${c.score}<span class="pr-max">/ ${c.max}점</span></div>
+        </div>`).join('');
+      const summaryEl = document.getElementById('print-summary');
+      summaryEl.innerHTML = printSummaryHTML || '';
+      summaryEl.style.display = printSummaryHTML ? '' : 'none';
       document.getElementById('print-mode').textContent = modeNames[currentMode] || '';
       document.getElementById('print-date').textContent =
         `출력일: ${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
-      document.getElementById('print-tbody').innerHTML = printRows.map(r => `
-        <tr class="${r.total ? 'total-row' : ''}">
-          <td>${r.label}</td><td>${r.score}</td><td>${r.max}</td>
-        </tr>`).join('');
       document.getElementById('print-note').textContent =
         currentMode === 'daejeon'
           ? '※ 대전광역시교육청 2027학년도 고등학교 입학전형 기본계획(공고 제2026-167호) 기준 산출'
           : '※ 참고용 산출 결과입니다.';
+      document.getElementById('print-disclaimer').textContent =
+        '※ 본 산출기의 결과는 단순 참고용으로만 사용해주세요. 정확한 내신 점수는 담임선생님 또는 진학 담당 선생님께 다시 확인하시기 바랍니다.';
+    }
+
+    let printTheme = 'dark'; // 인쇄 테마 (dark / light)
+    try {
+      const saved = localStorage.getItem('printTheme');
+      if (saved === 'light' || saved === 'dark') printTheme = saved;
+    } catch (e) {}
+
+    function setPrintTheme(theme) {
+      printTheme = theme;
+      try { localStorage.setItem('printTheme', theme); } catch (e) {}
+      const darkBtn = document.getElementById('theme-btn-dark');
+      const lightBtn = document.getElementById('theme-btn-light');
+      const active = ['bg-indigo-600', 'text-white'];
+      const inactive = ['bg-indigo-950/60', 'text-indigo-200'];
+      [darkBtn, lightBtn].forEach(b => { if (b) b.classList.remove(...active, ...inactive); });
+      const on = theme === 'dark' ? darkBtn : lightBtn;
+      const off = theme === 'dark' ? lightBtn : darkBtn;
+      if (on) { on.classList.add(...active); on.classList.remove('hover:bg-indigo-950'); }
+      if (off) { off.classList.add(...inactive, 'hover:bg-indigo-950'); }
     }
 
     function printReport() {
@@ -1149,6 +1341,7 @@
       lucide.createIcons();
       loadExactSample();
       initChart();
+      setPrintTheme(printTheme);
     });
   </script>
 </body>
